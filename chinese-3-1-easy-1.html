@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>字的小旅行・國字氣球</title>
+<style>
+:root{--ink:#1f3b5a;--sun:#ffd24d;--sun2:#e0a800;--green:#37c9b1;--green2:#1fa58f;--blue:#4aa8f0;--blue2:#2a86cf}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;font-weight:700;color:var(--ink);background:linear-gradient(#7fcfff,#bfe8ff 55%,#e8f8ff);overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+button{font:inherit;color:inherit;border:0;cursor:pointer}
+#app{position:fixed;inset:0;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:.45rem;padding:.5rem .6rem;background:rgba(255,255,255,.85);border-bottom:.2rem solid #cde6f7;flex:none}
+.dots{flex:1;display:flex;gap:.15rem;justify-content:center;flex-wrap:wrap;font-size:1.15rem;min-width:4rem}
+.dots .cnt{font-size:1.1rem;white-space:nowrap}.dots .bar{flex:1;max-width:14rem;height:.9rem;border-radius:99px;background:#e2eef8;overflow:hidden;align-self:center}.dots .bar b{display:block;height:100%;background:linear-gradient(90deg,#ffd24d,#ffb300);transition:width .6s}
+.gsel{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}.gsel button{padding:.45rem 1rem;border-radius:99px;background:#fff;border:.2rem solid #cde6f7;font-size:1.15rem}.gsel button.on{background:#fff3c4;border-color:#e0a800}
+.dots i{font-style:normal;opacity:.3;filter:grayscale(1)}
+.dots i.on{opacity:1;filter:none}
+.ib{min-width:3rem;height:3rem;border-radius:1rem;background:#fff;box-shadow:0 .2rem 0 #a9cbe3;font-size:1rem;flex:none;padding:0 .4rem;line-height:1.1}
+.ib{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:3.8rem;height:3.6rem;gap:.05rem}
+.ib .ic{font-size:1.25rem;line-height:1.1}
+.ib small{font-size:.72rem;color:#3d5a7a;white-space:nowrap;line-height:1.1}
+.ib.on{background:var(--sun);box-shadow:0 .2rem 0 var(--sun2)}
+.ib:active{transform:translateY(.2rem);box-shadow:none}
+.main{flex:1;overflow:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.9rem;gap:.8rem;text-align:center;position:relative}
+.btn{min-height:3.8rem;padding:.5rem 1.4rem;border-radius:1.4rem;font-size:1.5rem;background:var(--green);color:#fff;box-shadow:0 .35rem 0 var(--green2);white-space:nowrap}
+.btn:active{transform:translateY(.3rem);box-shadow:none}
+.btn.y{background:var(--sun);color:#5a3b00;box-shadow:0 .35rem 0 var(--sun2)}
+.btn.w{background:#fff;color:var(--ink);box-shadow:0 .35rem 0 #a9cbe3}
+.btn:disabled{opacity:.35}
+.pcards{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.pcard{position:relative;width:min(10rem,29vw);height:min(10rem,29vw);border-radius:1.6rem;background:#fff;box-shadow:0 .4rem 0 #a9cbe3;border:.25rem solid #cde6f7;display:flex;align-items:center;justify-content:center;transition:opacity .3s}
+.pcard .pe{font-size:min(5.6rem,17vw);line-height:1}
+.pcard .osp{position:absolute;right:.3rem;top:.3rem;font-size:1.05rem;background:#eef6ff;border-radius:.7rem;padding:.25rem .35rem;line-height:1}
+.pcard:active{transform:translateY(.3rem);box-shadow:none}
+.pcard.ok{background:#fffbe0;border-color:#ffd24d;animation:pop2 .5s}
+.pcard.bad{opacity:.25;pointer-events:none;animation:shake2 .4s}
+.pcard.dim{opacity:.25}
+.pcard.glow{box-shadow:0 0 1.6rem .7rem var(--sun),0 .4rem 0 #a9cbe3}
+@keyframes pop2{50%{transform:scale(1.15)}}
+@keyframes shake2{25%{transform:translateX(-.5rem)}75%{transform:translateX(.5rem)}}
+.pond{position:relative;flex:1;width:100%;max-width:56rem;min-height:24rem;border-radius:1.6rem;overflow:hidden;background:linear-gradient(#bfe8ff 0,#e6f6ff 9.6rem,#5cc0ec 9.6rem,#2a86cf 100%);box-shadow:0 .4rem 0 rgba(40,110,170,.25)}
+.pond::before{content:'';position:absolute;left:0;right:0;top:9rem;height:1.2rem;background:radial-gradient(circle at .8rem -.2rem,transparent 0 .75rem,#5cc0ec .8rem) 0 0/1.6rem 1.2rem repeat-x;animation:wv 3s linear infinite}
+@keyframes wv{to{background-position:1.6rem 0}}
+.sun2{position:absolute;right:4%;top:.5rem;font-size:2.6rem}
+.reed{position:absolute;bottom:-.3rem;font-size:3rem}.reed.l{left:.4rem}.reed.r{right:.4rem}
+.boatw{position:absolute;left:50%;top:.4rem;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;z-index:2}
+.sign{background:#fff;border:.25rem solid #8a5a2b;border-radius:1rem;padding:0 .7rem;font-size:min(4.2rem,13vw);line-height:1.35;color:#1d4f86;box-shadow:0 .3rem 0 #6e451c;cursor:pointer}
+.sign rt{font-size:.24em}
+.boatline{position:relative;margin-top:-.6rem;line-height:1}.boatline .bt{font-size:3.4rem;display:inline-block;animation:bob 2.6s ease-in-out infinite}.boatline .rod{position:absolute;right:-1.9rem;top:-.4rem;font-size:2rem}
+.fish{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);background:none;padding:0;z-index:1;animation:swim var(--d) ease-in-out infinite;animation-delay:var(--dl);transition:transform 1.1s cubic-bezier(.4,.1,.3,1),opacity .4s}
+@keyframes swim{0%,100%{transform:translate(-50%,-50%) translateX(-1.1rem)}50%{transform:translate(-50%,-50%) translateX(1.1rem) translateY(-.5rem)}}
+.fish .fb{position:relative;display:flex;align-items:center;justify-content:center;width:min(9.5rem,30vw);height:min(6.4rem,20vw);background:var(--c);border-radius:50% 45% 45% 50%/55% 50% 50% 55%;box-shadow:inset 0 -.5rem 0 rgba(0,0,0,.1),0 .35rem 0 rgba(0,40,80,.25);border:.2rem solid #fff}
+.fish .fb::after{content:'';position:absolute;right:-1.7rem;top:50%;transform:translateY(-50%);border-left:2.2rem solid var(--c);border-top:1.5rem solid transparent;border-bottom:1.5rem solid transparent}
+.fish.flip .fb::after{right:auto;left:-1.7rem;border-left:0;border-right:2.2rem solid var(--c)}
+.fish .eye{position:absolute;left:12%;top:28%;width:.8rem;height:.8rem;border-radius:50%;background:#223;box-shadow:0 0 0 .2rem #fff}
+.fish.flip .eye{left:auto;right:12%}
+.fish .pe{font-size:min(3.6rem,11vw);background:rgba(255,255,255,.9);border-radius:50%;width:min(5rem,16vw);height:min(5rem,16vw);display:flex;align-items:center;justify-content:center;line-height:1}
+.fish .osp{position:absolute;right:-.4rem;top:-.7rem;font-size:1.05rem;background:#eef6ff;border-radius:.7rem;padding:.25rem .35rem;line-height:1;z-index:2}
+.fish.glow .fb{box-shadow:0 0 1.6rem .7rem var(--sun),0 .35rem 0 rgba(0,40,80,.25)}
+.fish.dim{opacity:.3}
+.fish.away{animation:away 1.3s ease-in forwards;pointer-events:none}
+@keyframes away{to{transform:translate(-50%,-50%) translateX(70vw) translateY(2rem);opacity:0}}
+.fish.flip.away{animation-name:away2}@keyframes away2{to{transform:translate(-50%,-50%) translateX(-70vw) translateY(2rem);opacity:0}}
+.fish.caught{animation:none;z-index:3}
+.fline{position:absolute;width:.18rem;background:#fff;opacity:.9;z-index:2;transition:height 1.1s cubic-bezier(.4,.1,.3,1),left 1.1s;pointer-events:none}
+.splash{position:absolute;transform:translate(-50%,-50%);font-size:1.8rem;font-weight:900;color:#fff;text-shadow:0 .15rem 0 #1d5f99;z-index:4;pointer-events:none;animation:sp 1.2s forwards}
+@keyframes sp{0%{opacity:0;transform:translate(-50%,-30%) scale(.6)}30%{opacity:1;transform:translate(-50%,-90%) scale(1.2)}100%{opacity:0;transform:translate(-50%,-160%)}}
+@media (max-height:640px){.pond{min-height:20rem}}
+.btn.skip.fr{background:#3ecf72;box-shadow:0 .35rem 0 #22a653}
+.zcard{display:flex;align-items:center;gap:.6rem;background:#fff;border-radius:1.6rem;padding:.2rem 1.4rem;box-shadow:0 .4rem 0 rgba(40,110,170,.2);cursor:pointer;border:.25rem solid #cde6f7}
+.zcard .zz{font-size:min(4.4rem,14vw);color:#c0391f;letter-spacing:.12em;line-height:1.3;font-family:"BopomofoRuby","PingFang TC","Noto Sans TC",sans-serif}
+.zcard .zs{font-size:1.6rem}
+.lake{position:relative;flex:1;width:100%;max-width:56rem;min-height:19rem;border-radius:1.6rem;overflow:hidden;background:radial-gradient(ellipse at 20% 80%,rgba(255,255,255,.25) 0 2rem,transparent 2.1rem),radial-gradient(ellipse at 80% 15%,rgba(255,255,255,.2) 0 1.6rem,transparent 1.7rem),linear-gradient(#7fd3f2,#3aa3d9);box-shadow:0 .4rem 0 rgba(40,110,170,.25)}
+.lotus{position:absolute;font-size:2.2rem}.lotus.a{left:4%;top:6%}.lotus.b{right:5%;bottom:8%}
+.pad2{position:absolute;left:var(--x);top:var(--y);transform:translate(-50%,-50%);width:min(10rem,30vw);height:min(7.4rem,22vw);border-radius:50%;background:radial-gradient(ellipse at 38% 32%,#d8ffc9 0 8%,#7fd35f 9%,#3f9e34);border:.25rem solid #2f7d27;box-shadow:inset 0 -.5rem 0 rgba(0,60,0,.2),0 .4rem 0 rgba(0,50,90,.3);display:flex;align-items:center;justify-content:center;animation:float 3.4s ease-in-out infinite;animation-delay:var(--dl);transition:opacity .4s}
+.pad2::before{content:'';position:absolute;right:-.2rem;top:30%;width:2.4rem;height:.7rem;background:#4fb6e8;border-radius:.4rem;transform:rotate(22deg)}
+@keyframes float{0%,100%{transform:translate(-50%,-50%) rotate(-2deg)}50%{transform:translate(-50%,-50%) translateY(-.4rem) rotate(2deg)}}
+.pad2 .pc{font-size:min(4.4rem,14vw);color:#123d10;line-height:1;text-shadow:0 .12rem 0 rgba(255,255,255,.6)}
+.pad2 .osp{position:absolute;left:.2rem;top:-.4rem;font-size:1.05rem;background:#eef6ff;border-radius:.7rem;padding:.25rem .35rem;line-height:1}
+.pad2.glow{box-shadow:0 0 1.6rem .7rem var(--sun),0 .4rem 0 rgba(0,50,90,.3)}
+.pad2.dim{opacity:.35}
+.pad2.ok{background:radial-gradient(ellipse at 38% 32%,#fff7c9 0 8%,#b8e65f 9%,#6fae34)}
+.pad2.sink{animation:sink .9s forwards;pointer-events:none}
+@keyframes sink{to{transform:translate(-50%,-30%) scale(.7);opacity:.2;filter:grayscale(1)}}
+.frog2{position:absolute;left:50%;bottom:.3rem;margin-left:-1.8rem;font-size:3.6rem;line-height:1;z-index:3;transition:transform .75s cubic-bezier(.3,1.5,.5,1)}
+.frog2.hop{animation:hop .75s}
+@keyframes hop{50%{filter:drop-shadow(0 1.2rem .4rem rgba(0,0,0,.25))}}
+.btn.skip.pk{background:#9b6bff;box-shadow:0 .35rem 0 #7647e0}
+.btn.skip{background:#4aa8f0;box-shadow:0 .35rem 0 #2a86cf;font-size:1.35rem;min-height:3.4rem}
+.row{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center}
+.card{background:#fff;border-radius:2rem;padding:.8rem 1.3rem;box-shadow:0 .4rem 0 rgba(40,110,170,.2);max-width:34rem;width:100%}
+.tag{background:#fff;border-radius:99px;padding:.3rem 1.2rem;font-size:1.15rem;box-shadow:0 .2rem 0 #a9cbe3}
+.pic{font-size:5.2rem;line-height:1.2;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-.4rem)}}
+.big{font-size:min(7.5rem,20vh,28vw);line-height:1.3;cursor:pointer;color:#1d4f86}
+.word{font-size:2.3rem;line-height:1.9;cursor:pointer}
+.say{font-size:1.45rem;line-height:2.3;cursor:pointer;text-align:left;margin:.2rem 0}
+.say.fun{background:#fff7d6;border-radius:1rem;padding:.2rem .7rem}
+ruby{ruby-position:over}
+rt{font-size:.36em;color:#c0391f;font-weight:700}
+.big rt{font-size:.22em}
+.zyoff rt{visibility:hidden}
+.hl{background:#fff0a8;border-radius:.4rem;padding:0 .1rem;color:#c0391f}
+.box{display:inline-block;width:1.1em;height:1.1em;line-height:1.1em;border:.2rem dashed var(--blue2);border-radius:.4rem;color:var(--blue2);background:#e9f5ff;vertical-align:middle}
+/* 天空與雲朵 */
+.ask{display:flex;align-items:center;gap:.6rem;background:#fff;border-radius:1.6rem;padding:.4rem 1rem;box-shadow:0 .35rem 0 rgba(40,110,170,.2);flex:none;flex-wrap:wrap;justify-content:center}
+.ask .pic{font-size:3.4rem}
+.sky{position:relative;flex:1;width:100%;min-height:17rem;max-width:56rem}
+.sunny{position:absolute;right:4%;top:2%;font-size:3.4rem;animation:spin 18s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cloud{position:absolute;left:var(--x);top:var(--y);width:min(14rem,40vw);height:min(6.6rem,19vw);background:#fff;border-radius:5rem;box-shadow:0 .45rem 0 #a9cbe3;animation:sway var(--d) ease-in-out infinite;animation-delay:var(--dl);display:flex;align-items:flex-end;justify-content:center;padding-bottom:.2rem}
+.cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%;z-index:0}
+.cloud::before{width:44%;height:105%;left:13%;top:-48%}
+.cloud::after{width:38%;height:88%;right:13%;top:-36%}
+.cloud .ch{position:relative;z-index:1;font-size:min(4.8rem,14vw);line-height:1.15;color:#1d4f86}
+.cloud .face{position:absolute;z-index:1;bottom:.1rem;right:1rem;font-size:1.1rem;opacity:.8}
+.cloud .osp{position:absolute;z-index:2;left:.5rem;bottom:.4rem;font-size:1.05rem;background:#eef6ff;border-radius:.7rem;padding:.25rem .35rem;line-height:1}
+@keyframes sway{0%,100%{transform:translate(-50%,-50%) translateX(-1.4rem)}50%{transform:translate(-50%,-50%) translateX(1.4rem) translateY(-.7rem)}}
+.cloud.bad{animation:poof .6s forwards;pointer-events:none}
+@keyframes poof{to{transform:translate(-50%,-50%) scale(.8);opacity:.25;filter:grayscale(1)}}
+.cloud.ok{animation:yay .8s forwards;background:#fffbe0}
+.cloud.ok::before,.cloud.ok::after{background:#fffbe0}
+@keyframes yay{50%{transform:translate(-50%,-50%) scale(1.2)}100%{transform:translate(-50%,-50%) scale(1.1)}}
+.cloud.glow{box-shadow:0 0 1.6rem .7rem var(--sun),0 .45rem 0 #a9cbe3}
+.cloud.dim{opacity:.25;transition:opacity .4s}
+.drop{position:absolute;font-size:1.6rem;pointer-events:none;z-index:3;animation:drop 1.1s ease-in forwards}
+@keyframes drop{to{transform:translateY(9rem);opacity:0}}
+.rain{position:absolute;font-size:3rem;z-index:3;pointer-events:none;animation:rainbow 1.6s forwards}
+@keyframes rainbow{0%{transform:translate(-50%,0) scale(.3);opacity:0}30%{transform:translate(-50%,-2rem) scale(1.3);opacity:1}100%{transform:translate(-50%,-4rem) scale(1);opacity:0}}
+.stk{display:flex;flex-wrap:wrap;gap:.3rem;justify-content:center;min-height:2rem;font-size:1.5rem;flex:none}
+.praise{position:fixed;left:50%;top:28%;transform:translate(-50%,-50%);font-size:2.5rem;color:#fff;background:linear-gradient(#ffc233,#ff8a3d);padding:.4rem 1.8rem;border-radius:99px;z-index:9;pointer-events:none;box-shadow:0 .4rem 0 #d9631a;animation:pr 1.5s forwards;white-space:nowrap}
+@keyframes pr{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-80%)}}
+.conf{position:fixed;top:-3rem;font-size:2rem;z-index:8;pointer-events:none;animation:fall 3s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(6rem,1fr));gap:.6rem;max-width:38rem;width:100%}
+.grid button{background:#fff;border-radius:1.2rem;padding:.4rem;box-shadow:0 .25rem 0 #a9cbe3;font-size:1.8rem;line-height:1.5}
+.grid button small{display:block;font-size:2rem}
+.title{font-size:min(3rem,10vw);color:#fff;text-shadow:0 .2rem 0 #2a86cf,0 .4rem 0 #1d5f99;letter-spacing:.08em}
+.hint{font-size:1.1rem;color:#4a6585}
+.modalbg{position:fixed;inset:0;background:rgba(20,50,90,.45);z-index:20;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modalbg .card{max-height:92%;overflow:auto;text-align:center}
+@media (max-height:640px){.pic{font-size:3.6rem}.word{font-size:1.8rem}.say{font-size:1.2rem;line-height:2.1}.btn{min-height:3.1rem;font-size:1.25rem}.sky{min-height:14rem}}
+/* 國字氣球（取自 6-1 詞語氣球的樣式） */
+.bwrap{position:relative;flex:1;width:100%;max-width:56rem;min-height:17rem;display:flex;align-items:center;justify-content:center}
+.balloons{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2.4rem 1.8rem;padding:1rem 0 2rem}
+.balloon{position:relative;border:0;width:min(10rem,28vw);aspect-ratio:.86;border-radius:50% 50% 48% 48%/56% 56% 44% 44%;color:#fff;padding:0;display:flex;align-items:center;justify-content:center;box-shadow:inset -10px -12px 0 rgba(0,0,0,.14),inset 8px 8px 0 rgba(255,255,255,.3),0 .4rem 0 rgba(0,0,0,.1);animation:bob2 3s ease-in-out infinite}
+.balloon:nth-child(2){animation-delay:-1s}.balloon:nth-child(3){animation-delay:-2s}
+.balloon::after{content:"";position:absolute;left:50%;bottom:-2.2rem;width:2px;height:2.2rem;background:rgba(0,0,0,.35)}
+.balloon::before{content:"";position:absolute;left:50%;bottom:-.45rem;margin-left:-.4rem;border-left:.4rem solid transparent;border-right:.4rem solid transparent;border-bottom:.6rem solid var(--bc)}
+.balloon .ch{font-size:min(5rem,15vw);line-height:1;text-shadow:0 .15rem 0 rgba(0,0,0,.25)}
+.balloon .osp{position:absolute;left:-.4rem;top:-.4rem;font-size:1.05rem;background:#eef6ff;border-radius:.7rem;padding:.25rem .35rem;line-height:1}
+.balloon.b0{--bc:#e94b4b;background:#e94b4b}.balloon.b1{--bc:#2f7fe0;background:#2f7fe0}.balloon.b2{--bc:#f0a020;background:#f0a020}.balloon.b3{--bc:#2fb070;background:#2fb070}
+@keyframes bob2{50%{transform:translateY(-.8rem)}}
+.balloon.popped{animation:popb .45s forwards;pointer-events:none}
+@keyframes popb{60%{transform:scale(1.3)}100%{transform:scale(0);opacity:0}}
+.balloon.bad{opacity:.3;filter:grayscale(1);pointer-events:none}
+.balloon.dim{opacity:.3}
+.balloon.glow{box-shadow:0 0 1.6rem .7rem var(--sun),inset -10px -12px 0 rgba(0,0,0,.14)}
+.bird[hidden]{display:none}
+.bird{position:absolute;left:.5rem;top:.5rem;z-index:6;font-size:3.4rem;line-height:1;pointer-events:none;transition:transform 1.5s cubic-bezier(.45,.05,.3,1)}
+.bird .bi{display:inline-block;animation:flap .25s ease-in-out infinite}
+@keyframes flap{50%{transform:translateY(-.4rem) rotate(-8deg)}}
+.perch{position:absolute;left:50%;top:-2.6rem;margin-left:-1.5rem;font-size:3rem;line-height:1;pointer-events:none;animation:sit 1s ease-in-out infinite}
+@keyframes sit{50%{transform:translateY(-.25rem)}}
+.boom{position:absolute;transform:translate(-50%,-50%);font-size:2.6rem;z-index:5;pointer-events:none;animation:sp 1s forwards}
+.bigbtn{min-height:6rem;min-width:min(17rem,80vw);font-size:2rem;border-radius:2rem}
+</style></head>
+<body>
+<div id="app">
+  <div class="top">
+    <button class="ib" id="home" aria-label="回首頁"><span class="ic">🏠</span><small>回首頁</small></button>
+    <div class="dots" id="dots" style="align-items:center;gap:.5rem;flex-wrap:nowrap"></div>
+    <button class="ib on" id="zy" aria-label="注音開關"><span class="ic">ㄅㄆㄇ</span><small id="zyl">注音：開</small></button>
+    <button class="ib" id="nopt" aria-label="選項數"><span class="ic" id="nopt2">2個</span><small>選項數</small></button>
+    <button class="ib" id="slow" aria-label="慢慢唸"><span class="ic">🐢</span><small>慢慢唸</small></button>
+  </div>
+  <div class="main" id="main"></div>
+</div>
+<script>
+/* 每個字：注音、詞語、圖、意思（m）、好笑的說明（f）。每一句都附注音，也都會唸出來。 */
+const W=[{"g":"A","c":"字","pn":"鉛筆","z":"ㄗˋ","w":"寫字","wz":"ㄒㄧㄝˇ ㄗˋ","p":"✏️","m":["爺爺教我寫字。字，就是我們寫的國字。","ㄧㄝˊ ㄧㄝ˙ ㄐㄧㄠ ㄨㄛˇ ㄒㄧㄝˇ ㄗˋ ㄗˋ ㄐㄧㄡˋ ㄕˋ ㄨㄛˇ ㄇㄣ˙ ㄒㄧㄝˇ ㄉㄜ˙ ㄍㄨㄛˊ ㄗˋ"],"f":["猜字謎：小孩戴帽子。小孩子戴上帽子，咻！變成「字」，還很得意的說：「我最帥！」","ㄘㄞ ㄗˋ ㄇㄧˊ ㄒㄧㄠˇ ㄏㄞˊ ㄉㄞˋ ㄇㄠˋ ㄗ˙ ㄒㄧㄠˇ ㄏㄞˊ ㄗ˙ ㄉㄞˋ ㄕㄤˋ ㄇㄠˋ ㄗ˙ ㄒㄧㄡ ㄅㄧㄢˋ ㄔㄥˊ ㄗˋ ㄏㄞˊ ㄏㄣˇ ㄉㄜˊ ㄧˋ ㄉㄜ˙ ㄕㄨㄛ ㄨㄛˇ ㄗㄨㄟˋ ㄕㄨㄞˋ"]},
+{"g":"A","c":"舟","pn":"小舟","z":"ㄓㄡ","w":"小舟","wz":"ㄒㄧㄠˇ ㄓㄡ","p":"🛶","m":["爺爺說：「心是一葉舟。」舟，就是小船。","ㄧㄝˊ ㄧㄝ˙ ㄕㄨㄛ ㄒㄧㄣ ㄕˋ ㄧˊ ㄧㄝˋ ㄓㄡ ㄓㄡ ㄐㄧㄡˋ ㄕˋ ㄒㄧㄠˇ ㄔㄨㄢˊ"],"f":["猜字謎：船缺了半邊。大船不小心少了半邊，變成「舟」，大船哭著說：「我變瘦了啦！」","ㄘㄞ ㄗˋ ㄇㄧˊ ㄔㄨㄢˊ ㄑㄩㄝ ㄌㄜ˙ ㄅㄢˋ ㄅㄧㄢ ㄉㄚˋ ㄔㄨㄢˊ ㄅㄨˋ ㄒㄧㄠˇ ㄒㄧㄣ ㄕㄠˇ ㄌㄜ˙ ㄅㄢˋ ㄅㄧㄢ ㄅㄧㄢˋ ㄔㄥˊ ㄓㄡ ㄉㄚˋ ㄔㄨㄢˊ ㄎㄨ ㄓㄜ˙ ㄕㄨㄛ ㄨㄛˇ ㄅㄧㄢˋ ㄕㄡˋ ㄌㄜ˙ ㄌㄚ˙"]},
+{"g":"A","c":"灑","pn":"水花","z":"ㄙㄚˇ","w":"灑水","wz":"ㄙㄚˇ ㄕㄨㄟˇ","p":"💦","m":["細雨灑輕舟。灑，就是水一點一點落下來。","ㄒㄧˋ ㄩˇ ㄙㄚˇ ㄑㄧㄥ ㄓㄡ ㄙㄚˇ ㄐㄧㄡˋ ㄕˋ ㄕㄨㄟˇ ㄧˋ ㄉㄧㄢˇ ㄧˋ ㄉㄧㄢˇ ㄌㄨㄛˋ ㄒㄧㄚˋ ㄌㄞˊ"],"f":["猜字謎：美麗的水花。三點水加上美麗的「麗」，就是「灑」。小雨灑在小舟上，小舟洗了一個免費的澡！","ㄘㄞ ㄗˋ ㄇㄧˊ ㄇㄟˇ ㄌㄧˋ ㄉㄜ˙ ㄕㄨㄟˇ ㄏㄨㄚ ㄙㄢ ㄉㄧㄢˇ ㄕㄨㄟˇ ㄐㄧㄚ ㄕㄤˋ ㄇㄟˇ ㄌㄧˋ ㄉㄜ˙ ㄌㄧˋ ㄐㄧㄡˋ ㄕˋ ㄙㄚˇ ㄒㄧㄠˇ ㄩˇ ㄙㄚˇ ㄗㄞˋ ㄒㄧㄠˇ ㄓㄡ ㄕㄤˋ ㄒㄧㄠˇ ㄓㄡ ㄒㄧˇ ㄌㄜ˙ ㄧˊ ㄍㄜ˙ ㄇㄧㄢˇ ㄈㄟˋ ㄉㄜ˙ ㄗㄠˇ"]},
+{"g":"A","c":"載","pn":"卡車","z":"ㄗㄞˋ","w":"載貨","wz":"ㄗㄞˋ ㄏㄨㄛˋ","p":"🚚","m":["小船上要載什麼呢？載，就是把東西放上船或車，帶著走。","ㄒㄧㄠˇ ㄔㄨㄢˊ ㄕㄤˋ ㄧㄠˋ ㄗㄞˋ ㄕㄣˊ ㄇㄜ˙ ㄋㄜ˙ ㄗㄞˋ ㄐㄧㄡˋ ㄕˋ ㄅㄚˇ ㄉㄨㄥ ㄒㄧ˙ ㄈㄤˋ ㄕㄤˋ ㄔㄨㄢˊ ㄏㄨㄛˋ ㄔㄜ ㄉㄞˋ ㄓㄜ˙ ㄗㄡˇ"],"f":["小船只載自己，一個人坐好無聊，只好跟水裡的魚聊天：「嗨，你吃飽了沒？」","ㄒㄧㄠˇ ㄔㄨㄢˊ ㄓˇ ㄗㄞˋ ㄗˋ ㄐㄧˇ ㄧˊ ㄍㄜ˙ ㄖㄣˊ ㄗㄨㄛˋ ㄏㄠˇ ㄨˊ ㄌㄧㄠˊ ㄓˇ ㄏㄠˇ ㄍㄣ ㄕㄨㄟˇ ㄌㄧˇ ㄉㄜ˙ ㄩˊ ㄌㄧㄠˊ ㄊㄧㄢ ㄏㄞ ㄋㄧˇ ㄔ ㄅㄠˇ ㄌㄜ˙ ㄇㄟˊ"]},
+{"g":"A","c":"航","pn":"大船","z":"ㄏㄤˊ","w":"航行","wz":"ㄏㄤˊ ㄒㄧㄥˊ","p":"🚢","m":["小船停下不航行。航行，就是船在水上往前走。","ㄒㄧㄠˇ ㄔㄨㄢˊ ㄊㄧㄥˊ ㄒㄧㄚˋ ㄅㄨˋ ㄏㄤˊ ㄒㄧㄥˊ ㄏㄤˊ ㄒㄧㄥˊ ㄐㄧㄡˋ ㄕˋ ㄔㄨㄢˊ ㄗㄞˋ ㄕㄨㄟˇ ㄕㄤˋ ㄨㄤˇ ㄑㄧㄢˊ ㄗㄡˇ"],"f":["「航」的左邊有一條小舟。小舟說：「我要航行去看大海！」結果划太快，連海鷗都追不上！","ㄏㄤˊ ㄉㄜ˙ ㄗㄨㄛˇ ㄅㄧㄢ ㄧㄡˇ ㄧˋ ㄊㄧㄠˊ ㄒㄧㄠˇ ㄓㄡ ㄒㄧㄠˇ ㄓㄡ ㄕㄨㄛ ㄨㄛˇ ㄧㄠˋ ㄏㄤˊ ㄒㄧㄥˊ ㄑㄩˋ ㄎㄢˋ ㄉㄚˋ ㄏㄞˇ ㄐㄧㄝˊ ㄍㄨㄛˇ ㄏㄨㄚˊ ㄊㄞˋ ㄎㄨㄞˋ ㄌㄧㄢˊ ㄏㄞˇ ㄡ ㄉㄡ ㄓㄨㄟ ㄅㄨˊ ㄕㄤˋ"]},
+{"g":"A","c":"忌","pn":"嘟嘴生氣","z":"ㄐㄧˋ","w":"忌妒","wz":"ㄐㄧˋ ㄉㄨˋ","p":"😤","m":["小船一下變成忌，愛忌妒。猜字謎：心上只有我，就是「忌」。","ㄒㄧㄠˇ ㄔㄨㄢˊ ㄧˊ ㄒㄧㄚˋ ㄅㄧㄢˋ ㄔㄥˊ ㄐㄧˋ ㄞˋ ㄐㄧˋ ㄉㄨˋ ㄘㄞ ㄗˋ ㄇㄧˊ ㄒㄧㄣ ㄕㄤˋ ㄓˇ ㄧㄡˇ ㄨㄛˇ ㄐㄧㄡˋ ㄕˋ ㄐㄧˋ"],"f":["心裡只想著自己，看到別人有新玩具，嘴巴就嘟得可以掛三個水桶！","ㄒㄧㄣ ㄌㄧˇ ㄓˇ ㄒㄧㄤˇ ㄓㄜ˙ ㄗˋ ㄐㄧˇ ㄎㄢˋ ㄉㄠˋ ㄅㄧㄝˊ ㄖㄣˊ ㄧㄡˇ ㄒㄧㄣ ㄨㄢˊ ㄐㄩˋ ㄗㄨㄟˇ ㄅㄚ˙ ㄐㄧㄡˋ ㄉㄨ ㄉㄜ˙ ㄎㄜˇ ㄧˇ ㄍㄨㄚˋ ㄙㄢ ㄍㄜ˙ ㄕㄨㄟˇ ㄊㄨㄥˇ"]},
+{"g":"A","c":"妒","pn":"酸酸的檸檬","z":"ㄉㄨˋ","w":"忌妒","wz":"ㄐㄧˋ ㄉㄨˋ","p":"🍋","m":["愛忌妒，快樂消失太可惜。「女」加上「戶」，就是「妒」。","ㄞˋ ㄐㄧˋ ㄉㄨˋ ㄎㄨㄞˋ ㄌㄜˋ ㄒㄧㄠ ㄕ ㄊㄞˋ ㄎㄜˇ ㄒㄧˊ ㄋㄩˇ ㄐㄧㄚ ㄕㄤˋ ㄏㄨˋ ㄐㄧㄡˋ ㄕˋ ㄉㄨˋ"],"f":["忌妒的時候，心裡酸得像吃了十顆檸檬，臉都皺成一顆小籠包！","ㄐㄧˋ ㄉㄨˋ ㄉㄜ˙ ㄕˊ ㄏㄡ˙ ㄒㄧㄣ ㄌㄧˇ ㄙㄨㄢ ㄉㄜ˙ ㄒㄧㄤˋ ㄔ ㄌㄜ˙ ㄕˊ ㄎㄜ ㄋㄧㄥˊ ㄇㄥˊ ㄌㄧㄢˇ ㄉㄡ ㄓㄡˋ ㄔㄥˊ ㄧˋ ㄎㄜ ㄒㄧㄠˇ ㄌㄨㄥˊ ㄅㄠ"]},
+{"g":"A","c":"失","pn":"放大鏡找東西","z":"ㄕ","w":"消失","wz":"ㄒㄧㄠ ㄕ","p":"🔍","m":["快樂消失太可惜。失，就是不見了。","ㄎㄨㄞˋ ㄌㄜˋ ㄒㄧㄠ ㄕ ㄊㄞˋ ㄎㄜˇ ㄒㄧˊ ㄕ ㄐㄧㄡˋ ㄕˋ ㄅㄨˊ ㄐㄧㄢˋ ㄌㄜ˙"],"f":["猜字謎：夫子多一撇。「夫」的頭上多了一撇，就變成「失」，農夫嚇一跳：「我的帽子不見了！」","ㄘㄞ ㄗˋ ㄇㄧˊ ㄈㄨ ㄗˇ ㄉㄨㄛ ㄧˋ ㄆㄧㄝˇ ㄈㄨ ㄉㄜ˙ ㄊㄡˊ ㄕㄤˋ ㄉㄨㄛ ㄌㄜ˙ ㄧˋ ㄆㄧㄝˇ ㄐㄧㄡˋ ㄅㄧㄢˋ ㄔㄥˊ ㄕ ㄋㄨㄥˊ ㄈㄨ ㄒㄧㄚˋ ㄧˊ ㄊㄧㄠˋ ㄨㄛˇ ㄉㄜ˙ ㄇㄠˋ ㄗ˙ ㄅㄨˊ ㄐㄧㄢˋ ㄌㄜ˙"]},
+{"g":"A","c":"讓","pn":"椅子","z":"ㄖㄤˋ","w":"讓座","wz":"ㄖㄤˋ ㄗㄨㄛˋ","p":"🪑","m":["還是讓我載著你。讓，就是把好東西分給別人。","ㄏㄞˊ ㄕˋ ㄖㄤˋ ㄨㄛˇ ㄗㄞˋ ㄓㄜ˙ ㄋㄧˇ ㄖㄤˋ ㄐㄧㄡˋ ㄕˋ ㄅㄚˇ ㄏㄠˇ ㄉㄨㄥ ㄒㄧ˙ ㄈㄣ ㄍㄟˇ ㄅㄧㄝˊ ㄖㄣˊ"],"f":["小船說：「上來吧，我讓你坐最好的位子！」結果大象也想上船，小船嚇得大叫：「等一下！」","ㄒㄧㄠˇ ㄔㄨㄢˊ ㄕㄨㄛ ㄕㄤˋ ㄌㄞˊ ㄅㄚ˙ ㄨㄛˇ ㄖㄤˋ ㄋㄧˇ ㄗㄨㄛˋ ㄗㄨㄟˋ ㄏㄠˇ ㄉㄜ˙ ㄨㄟˋ ㄗ˙ ㄐㄧㄝˊ ㄍㄨㄛˇ ㄉㄚˋ ㄒㄧㄤˋ ㄧㄝˇ ㄒㄧㄤˇ ㄕㄤˋ ㄔㄨㄢˊ ㄒㄧㄠˇ ㄔㄨㄢˊ ㄒㄧㄚˋ ㄉㄜ˙ ㄉㄚˋ ㄐㄧㄠˋ ㄉㄥˇ ㄧˊ ㄒㄧㄚˋ"]},
+{"g":"A","c":"您","pn":"老師","z":"ㄋㄧㄣˊ","w":"您好","wz":"ㄋㄧㄣˊ ㄏㄠˇ","p":"👩‍🏫","m":["讓你變成您。「你」的下面放一顆心，就是「您」。","ㄖㄤˋ ㄋㄧˇ ㄅㄧㄢˋ ㄔㄥˊ ㄋㄧㄣˊ ㄋㄧˇ ㄉㄜ˙ ㄒㄧㄚˋ ㄇㄧㄢˋ ㄈㄤˋ ㄧˋ ㄎㄜ ㄒㄧㄣ ㄐㄧㄡˋ ㄕˋ ㄋㄧㄣˊ"],"f":["對老師說「您好」，比「你好」多一顆心，老師開心得眼睛變成兩個小月亮！","ㄉㄨㄟˋ ㄌㄠˇ ㄕ ㄕㄨㄛ ㄋㄧㄣˊ ㄏㄠˇ ㄅㄧˇ ㄋㄧˇ ㄏㄠˇ ㄉㄨㄛ ㄧˋ ㄎㄜ ㄒㄧㄣ ㄌㄠˇ ㄕ ㄎㄞ ㄒㄧㄣ ㄉㄜ˙ ㄧㄢˇ ㄐㄧㄥ ㄅㄧㄢˋ ㄔㄥˊ ㄌㄧㄤˇ ㄍㄜ˙ ㄒㄧㄠˇ ㄩㄝˋ ㄌㄧㄤˋ"]},
+{"g":"A","c":"揮","pn":"揮手","z":"ㄏㄨㄟ","w":"揮手","wz":"ㄏㄨㄟ ㄕㄡˇ","p":"👋","m":["想要揮灑自如的寫字。揮，就是把手舉起來搖一搖。","ㄒㄧㄤˇ ㄧㄠˋ ㄏㄨㄟ ㄙㄚˇ ㄗˋ ㄖㄨˊ ㄉㄜ˙ ㄒㄧㄝˇ ㄗˋ ㄏㄨㄟ ㄐㄧㄡˋ ㄕˋ ㄅㄚˇ ㄕㄡˇ ㄐㄩˇ ㄑㄧˇ ㄌㄞˊ ㄧㄠˊ ㄧ˙ ㄧㄠˊ"],"f":["「揮」的左邊是一隻手。我在小舟上揮手說再見，揮得太用力，差一點掉進河裡！","ㄏㄨㄟ ㄉㄜ˙ ㄗㄨㄛˇ ㄅㄧㄢ ㄕˋ ㄧˋ ㄓ ㄕㄡˇ ㄨㄛˇ ㄗㄞˋ ㄒㄧㄠˇ ㄓㄡ ㄕㄤˋ ㄏㄨㄟ ㄕㄡˇ ㄕㄨㄛ ㄗㄞˋ ㄐㄧㄢˋ ㄏㄨㄟ ㄉㄜ˙ ㄊㄞˋ ㄩㄥˋ ㄌㄧˋ ㄔㄚ ㄧˋ ㄉㄧㄢˇ ㄉㄧㄠˋ ㄐㄧㄣˋ ㄏㄜˊ ㄌㄧˇ"]},
+{"g":"A","c":"整","pn":"一疊整齊的書","z":"ㄓㄥˇ","w":"工整","wz":"ㄍㄨㄥ ㄓㄥˇ","p":"📚","m":["常常練習，才能寫得工整漂亮。工整，就是寫得整整齊齊。","ㄔㄤˊ ㄔㄤˊ ㄌㄧㄢˋ ㄒㄧˊ ㄘㄞˊ ㄋㄥˊ ㄒㄧㄝˇ ㄉㄜ˙ ㄍㄨㄥ ㄓㄥˇ ㄆㄧㄠˋ ㄌㄧㄤˋ ㄍㄨㄥ ㄓㄥˇ ㄐㄧㄡˋ ㄕˋ ㄒㄧㄝˇ ㄉㄜ˙ ㄓㄥˇ ㄓㄥˇ ㄑㄧˊ ㄑㄧˊ"],"f":["我的字寫得超級工整，每個字都站得直直的，好像在排隊等著領糖果！","ㄨㄛˇ ㄉㄜ˙ ㄗˋ ㄒㄧㄝˇ ㄉㄜ˙ ㄔㄠ ㄐㄧˊ ㄍㄨㄥ ㄓㄥˇ ㄇㄟˇ ㄍㄜ˙ ㄗˋ ㄉㄡ ㄓㄢˋ ㄉㄜ˙ ㄓˊ ㄓˊ ㄉㄜ˙ ㄏㄠˇ ㄒㄧㄤˋ ㄗㄞˋ ㄆㄞˊ ㄉㄨㄟˋ ㄉㄥˇ ㄓㄜ˙ ㄌㄧㄥˇ ㄊㄤˊ ㄍㄨㄛˇ"]},
+{"g":"B","c":"心","pn":"愛心","z":"ㄒㄧㄣ","w":"開心","wz":"ㄎㄞ ㄒㄧㄣ","p":"❤️","m":["爺爺教我寫心字：心是一葉舟，細雨灑輕舟。","ㄧㄝˊ ㄧㄝ˙ ㄐㄧㄠ ㄨㄛˇ ㄒㄧㄝˇ ㄒㄧㄣ ㄗˋ ㄒㄧㄣ ㄕˋ ㄧˊ ㄧㄝˋ ㄓㄡ ㄒㄧˋ ㄩˇ ㄙㄚˇ ㄑㄧㄥ ㄓㄡ"],"f":["心字中間那一筆是小舟，三個點是雨滴。一點落舟前，一點落舟中，一點落舟後，小舟濕答答！","ㄒㄧㄣ ㄗˋ ㄓㄨㄥ ㄐㄧㄢ ㄋㄚˋ ㄧˋ ㄅㄧˇ ㄕˋ ㄒㄧㄠˇ ㄓㄡ ㄙㄢ ㄍㄜ˙ ㄉㄧㄢˇ ㄕˋ ㄩˇ ㄉㄧ ㄧˋ ㄉㄧㄢˇ ㄌㄨㄛˋ ㄓㄡ ㄑㄧㄢˊ ㄧˋ ㄉㄧㄢˇ ㄌㄨㄛˋ ㄓㄡ ㄓㄨㄥ ㄧˋ ㄉㄧㄢˇ ㄌㄨㄛˋ ㄓㄡ ㄏㄡˋ ㄒㄧㄠˇ ㄓㄡ ㄕ ㄉㄚ ㄉㄚ"]},
+{"g":"B","c":"息","pn":"睡覺","z":"ㄒㄧ","w":"休息","wz":"ㄒㄧㄡ ㄒㄧ","p":"😴","m":["一下變成息，愛休息，小船停下不航行。「自」加上「心」，就是「息」。","ㄧˊ ㄒㄧㄚˋ ㄅㄧㄢˋ ㄔㄥˊ ㄒㄧ ㄞˋ ㄒㄧㄡ ㄒㄧ ㄒㄧㄠˇ ㄔㄨㄢˊ ㄊㄧㄥˊ ㄒㄧㄚˋ ㄅㄨˋ ㄏㄤˊ ㄒㄧㄥˊ ㄗˋ ㄐㄧㄚ ㄕㄤˋ ㄒㄧㄣ ㄐㄧㄡˋ ㄕˋ ㄒㄧ"],"f":["小船愛休息，停在河中間呼呼大睡，打呼聲大到把青蛙嚇得跳回水裡！","ㄒㄧㄠˇ ㄔㄨㄢˊ ㄞˋ ㄒㄧㄡ ㄒㄧ ㄊㄧㄥˊ ㄗㄞˋ ㄏㄜˊ ㄓㄨㄥ ㄐㄧㄢ ㄏㄨ ㄏㄨ ㄉㄚˋ ㄕㄨㄟˋ ㄉㄚˇ ㄏㄨ ㄕㄥ ㄉㄚˋ ㄉㄠˋ ㄅㄚˇ ㄑㄧㄥ ㄨㄚ ㄒㄧㄚˋ ㄉㄜ˙ ㄊㄧㄠˋ ㄏㄨㄟˊ ㄕㄨㄟˇ ㄌㄧˇ"]},
+{"g":"B","c":"恭","pn":"拉炮慶祝","z":"ㄍㄨㄥ","w":"恭喜","wz":"ㄍㄨㄥ ㄒㄧˇ","p":"🎉","m":["人人見面說恭喜。恭喜，就是祝福別人有好事。","ㄖㄣˊ ㄖㄣˊ ㄐㄧㄢˋ ㄇㄧㄢˋ ㄕㄨㄛ ㄍㄨㄥ ㄒㄧˇ ㄍㄨㄥ ㄒㄧˇ ㄐㄧㄡˋ ㄕˋ ㄓㄨˋ ㄈㄨˊ ㄅㄧㄝˊ ㄖㄣˊ ㄧㄡˇ ㄏㄠˇ ㄕˋ"],"f":["「恭」的下面，藏著一顆小小的心。大家說恭喜說到嘴巴好痠，只好改成用唱的！","ㄍㄨㄥ ㄉㄜ˙ ㄒㄧㄚˋ ㄇㄧㄢˋ ㄘㄤˊ ㄓㄜ˙ ㄧˋ ㄎㄜ ㄒㄧㄠˇ ㄒㄧㄠˇ ㄉㄜ˙ ㄒㄧㄣ ㄉㄚˋ ㄐㄧㄚ ㄕㄨㄛ ㄍㄨㄥ ㄒㄧˇ ㄕㄨㄛ ㄉㄠˋ ㄗㄨㄟˇ ㄅㄚ˙ ㄏㄠˇ ㄙㄨㄢ ㄓˇ ㄏㄠˇ ㄍㄞˇ ㄔㄥˊ ㄩㄥˋ ㄔㄤˋ ㄉㄜ˙"]},
+{"g":"B","c":"情","pn":"開心的笑臉","z":"ㄑㄧㄥˊ","w":"心情","wz":"ㄒㄧㄣ ㄑㄧㄥˊ","p":"😊","m":["天天都有好心情。「心」站起來，加上「青」，就是「情」。","ㄊㄧㄢ ㄊㄧㄢ ㄉㄡ ㄧㄡˇ ㄏㄠˇ ㄒㄧㄣ ㄑㄧㄥˊ ㄒㄧㄣ ㄓㄢˋ ㄑㄧˇ ㄌㄞˊ ㄐㄧㄚ ㄕㄤˋ ㄑㄧㄥ ㄐㄧㄡˋ ㄕˋ ㄑㄧㄥˊ"],"f":["心情好的時候，連走路都想跳舞，連小狗看到都跟著扭屁股！","ㄒㄧㄣ ㄑㄧㄥˊ ㄏㄠˇ ㄉㄜ˙ ㄕˊ ㄏㄡ˙ ㄌㄧㄢˊ ㄗㄡˇ ㄌㄨˋ ㄉㄡ ㄒㄧㄤˇ ㄊㄧㄠˋ ㄨˇ ㄌㄧㄢˊ ㄒㄧㄠˇ ㄍㄡˇ ㄎㄢˋ ㄉㄠˋ ㄉㄡ ㄍㄣ ㄓㄜ˙ ㄋㄧㄡˇ ㄆㄧˋ ㄍㄨˇ"]},
+{"g":"B","c":"思","pn":"想一想","z":"ㄙ","w":"思考","wz":"ㄙ ㄎㄠˇ","p":"🤔","m":["「田」加上「心」，就是「思」。思，就是動腦筋想一想。","ㄊㄧㄢˊ ㄐㄧㄚ ㄕㄤˋ ㄒㄧㄣ ㄐㄧㄡˋ ㄕˋ ㄙ ㄙ ㄐㄧㄡˋ ㄕˋ ㄉㄨㄥˋ ㄋㄠˇ ㄐㄧㄣ ㄒㄧㄤˇ ㄧ˙ ㄒㄧㄤˇ"],"f":["心上面頂著一塊田，難怪想事情的時候，頭好重好重！","ㄒㄧㄣ ㄕㄤˋ ㄇㄧㄢˋ ㄉㄧㄥˇ ㄓㄜ˙ ㄧˊ ㄎㄨㄞˋ ㄊㄧㄢˊ ㄋㄢˊ ㄍㄨㄞˋ ㄒㄧㄤˇ ㄕˋ ㄑㄧㄥ˙ ㄉㄜ˙ ㄕˊ ㄏㄡ˙ ㄊㄡˊ ㄏㄠˇ ㄓㄨㄥˋ ㄏㄠˇ ㄓㄨㄥˋ"]},
+{"g":"B","c":"休","pn":"大樹","z":"ㄒㄧㄡ","w":"午休","wz":"ㄨˇ ㄒㄧㄡ","p":"🌳","m":["午休時間，要好好休息。「人」靠在「木」旁邊，就是「休」。","ㄨˇ ㄒㄧㄡ ㄕˊ ㄐㄧㄢ ㄧㄠˋ ㄏㄠˇ ㄏㄠˇ ㄒㄧㄡ ㄒㄧ ㄖㄣˊ ㄎㄠˋ ㄗㄞˋ ㄇㄨˋ ㄆㄤˊ ㄅㄧㄢ ㄐㄧㄡˋ ㄕˋ ㄒㄧㄡ"],"f":["走累了，靠在大樹旁邊休息，結果睡得太香，小鳥在我頭上做了一個鳥窩！","ㄗㄡˇ ㄌㄟˋ ㄌㄜ˙ ㄎㄠˋ ㄗㄞˋ ㄉㄚˋ ㄕㄨˋ ㄆㄤˊ ㄅㄧㄢ ㄒㄧㄡ ㄒㄧ ㄐㄧㄝˊ ㄍㄨㄛˇ ㄕㄨㄟˋ ㄉㄜ˙ ㄊㄞˋ ㄒㄧㄤ ㄒㄧㄠˇ ㄋㄧㄠˇ ㄗㄞˋ ㄨㄛˇ ㄊㄡˊ ㄕㄤˋ ㄗㄨㄛˋ ㄌㄜ˙ ㄧˊ ㄍㄜ˙ ㄋㄧㄠˇ ㄨㄛ"]},
+{"g":"C","c":"田","pn":"稻田","z":"ㄊㄧㄢˊ","w":"稻田","wz":"ㄉㄠˋ ㄊㄧㄢˊ","p":"🌾","m":["田字出頭要自由。田，就是農夫工作的地方。","ㄊㄧㄢˊ ㄗˋ ㄔㄨ ㄊㄡˊ ㄧㄠˋ ㄗˋ ㄧㄡˊ ㄊㄧㄢˊ ㄐㄧㄡˋ ㄕˋ ㄋㄨㄥˊ ㄈㄨ ㄍㄨㄥ ㄗㄨㄛˋ ㄉㄜ˙ ㄉㄧˋ ㄈㄤ"],"f":["「田」字看起來像一塊田，中間切成四格，好像一塊巧克力！","ㄊㄧㄢˊ ㄗˋ ㄎㄢˋ ㄑㄧˇ ㄌㄞˊ ㄒㄧㄤˋ ㄧˊ ㄎㄨㄞˋ ㄊㄧㄢˊ ㄓㄨㄥ ㄐㄧㄢ ㄑㄧㄝ ㄔㄥˊ ㄙˋ ㄍㄜˊ ㄏㄠˇ ㄒㄧㄤˋ ㄧˊ ㄎㄨㄞˋ ㄑㄧㄠˇ ㄎㄜˋ ㄌㄧˋ"]},
+{"g":"C","c":"由","pn":"小苗","z":"ㄧㄡˊ","w":"自由","wz":"ㄗˋ ㄧㄡˊ","p":"🌱","m":["田字出頭要自由。「田」字的中間出頭，就變成「由」。","ㄊㄧㄢˊ ㄗˋ ㄔㄨ ㄊㄡˊ ㄧㄠˋ ㄗˋ ㄧㄡˊ ㄊㄧㄢˊ ㄗˋ ㄉㄜ˙ ㄓㄨㄥ ㄐㄧㄢ ㄔㄨ ㄊㄡˊ ㄐㄧㄡˋ ㄅㄧㄢˋ ㄔㄥˊ ㄧㄡˊ"],"f":["田裡的小苗把頭伸出去大喊：「我自由啦！」稻草人嚇得帽子都飛了！","ㄊㄧㄢˊ ㄌㄧˇ ㄉㄜ˙ ㄒㄧㄠˇ ㄇㄧㄠˊ ㄅㄚˇ ㄊㄡˊ ㄕㄣ ㄔㄨ ㄑㄩˋ ㄉㄚˋ ㄏㄢˇ ㄨㄛˇ ㄗˋ ㄧㄡˊ ㄌㄚ˙ ㄉㄠˋ ㄘㄠˇ ㄖㄣˊ ㄒㄧㄚˋ ㄉㄜ˙ ㄇㄠˋ ㄗ˙ ㄉㄡ ㄈㄟ ㄌㄜ˙"]},
+{"g":"C","c":"午","pn":"中午的時鐘","z":"ㄨˇ","w":"中午","wz":"ㄓㄨㄥ ㄨˇ","p":"🕛","m":["午字出頭變黃牛。午，就是中午，太陽在頭頂上的時候。","ㄨˇ ㄗˋ ㄔㄨ ㄊㄡˊ ㄅㄧㄢˋ ㄏㄨㄤˊ ㄋㄧㄡˊ ㄨˇ ㄐㄧㄡˋ ㄕˋ ㄓㄨㄥ ㄨˇ ㄊㄞˋ ㄧㄤˊ ㄗㄞˋ ㄊㄡˊ ㄉㄧㄥˇ ㄕㄤˋ ㄉㄜ˙ ㄕˊ ㄏㄡ˙"],"f":["中午到了，肚子咕嚕咕嚕叫，好像在說：「快給我吃飯！」","ㄓㄨㄥ ㄨˇ ㄉㄠˋ ㄌㄜ˙ ㄉㄨˋ ㄗ˙ ㄍㄨ ㄌㄨ ㄍㄨ ㄌㄨ ㄐㄧㄠˋ ㄏㄠˇ ㄒㄧㄤˋ ㄗㄞˋ ㄕㄨㄛ ㄎㄨㄞˋ ㄍㄟˇ ㄨㄛˇ ㄔ ㄈㄢˋ"]},
+{"g":"C","c":"牛","pn":"黃牛","z":"ㄋㄧㄡˊ","w":"黃牛","wz":"ㄏㄨㄤˊ ㄋㄧㄡˊ","p":"🐂","m":["午字出頭變黃牛。「午」字出頭，就變成「牛」。","ㄨˇ ㄗˋ ㄔㄨ ㄊㄡˊ ㄅㄧㄢˋ ㄏㄨㄤˊ ㄋㄧㄡˊ ㄨˇ ㄗˋ ㄔㄨ ㄊㄡˊ ㄐㄧㄡˋ ㄅㄧㄢˋ ㄔㄥˊ ㄋㄧㄡˊ"],"f":["中午吃太飽，「午」的頭冒出來，變成一頭大黃牛：「哞！我還要再吃一碗！」","ㄓㄨㄥ ㄨˇ ㄔ ㄊㄞˋ ㄅㄠˇ ㄨˇ ㄉㄜ˙ ㄊㄡˊ ㄇㄠˋ ㄔㄨ ㄌㄞˊ ㄅㄧㄢˋ ㄔㄥˊ ㄧˋ ㄊㄡˊ ㄉㄚˋ ㄏㄨㄤˊ ㄋㄧㄡˊ ㄇㄡ ㄨㄛˇ ㄏㄞˊ ㄧㄠˋ ㄗㄞˋ ㄔ ㄧˋ ㄨㄢˇ"]},
+{"g":"C","c":"石","pn":"石頭","z":"ㄕˊ","w":"石頭","wz":"ㄕˊ ㄊㄡ˙","p":"🪨","m":["石字出頭靠右行。石，就是硬硬的石頭。","ㄕˊ ㄗˋ ㄔㄨ ㄊㄡˊ ㄎㄠˋ ㄧㄡˋ ㄒㄧㄥˊ ㄕˊ ㄐㄧㄡˋ ㄕˋ ㄧㄥˋ ㄧㄥˋ ㄉㄜ˙ ㄕˊ ㄊㄡ˙"],"f":["我踢到石頭，腳好痛，石頭卻說：「我又沒動！」","ㄨㄛˇ ㄊㄧ ㄉㄠˋ ㄕˊ ㄊㄡ˙ ㄐㄧㄠˇ ㄏㄠˇ ㄊㄨㄥˋ ㄕˊ ㄊㄡ˙ ㄑㄩㄝˋ ㄕㄨㄛ ㄨㄛˇ ㄧㄡˋ ㄇㄟˊ ㄉㄨㄥˋ"]},
+{"g":"C","c":"右","pn":"手指向右邊","z":"ㄧㄡˋ","w":"右邊","wz":"ㄧㄡˋ ㄅㄧㄢ","p":"👉","m":["石字出頭靠右行。「石」字出頭，就變成「右」。","ㄕˊ ㄗˋ ㄔㄨ ㄊㄡˊ ㄎㄠˋ ㄧㄡˋ ㄒㄧㄥˊ ㄕˊ ㄗˋ ㄔㄨ ㄊㄡˊ ㄐㄧㄡˋ ㄅㄧㄢˋ ㄔㄥˊ ㄧㄡˋ"],"f":["小石頭走路總是靠右邊走，有一天頭伸出來，「石」就變成「右」，還得意的說：「我最守規矩！」","ㄒㄧㄠˇ ㄕˊ ㄊㄡ˙ ㄗㄡˇ ㄌㄨˋ ㄗㄨㄥˇ ㄕˋ ㄎㄠˋ ㄧㄡˋ ㄅㄧㄢ ㄗㄡˇ ㄧㄡˇ ㄧˋ ㄊㄧㄢ ㄊㄡˊ ㄕㄣ ㄔㄨ ㄌㄞˊ ㄕˊ ㄐㄧㄡˋ ㄅㄧㄢˋ ㄔㄥˊ ㄧㄡˋ ㄏㄞˊ ㄉㄜˊ ㄧˋ ㄉㄜ˙ ㄕㄨㄛ ㄨㄛˇ ㄗㄨㄟˋ ㄕㄡˇ ㄍㄨㄟ ㄐㄩˇ"]},
+{"g":"C","c":"甲","pn":"指甲","z":"ㄐㄧㄚˇ","w":"指甲","wz":"ㄓˇ ㄐㄧㄚˇ","p":"💅","m":["甲字出頭要申請。甲，就是手指上的指甲。","ㄐㄧㄚˇ ㄗˋ ㄔㄨ ㄊㄡˊ ㄧㄠˋ ㄕㄣ ㄑㄧㄥˇ ㄐㄧㄚˇ ㄐㄧㄡˋ ㄕˋ ㄕㄡˇ ㄓˇ ㄕㄤˋ ㄉㄜ˙ ㄓˇ ㄐㄧㄚˇ"],"f":["指甲太長了，抓癢抓到變成小貓咪，喵！該剪指甲囉！","ㄓˇ ㄐㄧㄚˇ ㄊㄞˋ ㄔㄤˊ ㄌㄜ˙ ㄓㄨㄚ ㄧㄤˇ ㄓㄨㄚ ㄉㄠˋ ㄅㄧㄢˋ ㄔㄥˊ ㄒㄧㄠˇ ㄇㄠ ㄇㄧ ㄇㄧㄠ ㄍㄞ ㄐㄧㄢˇ ㄓˇ ㄐㄧㄚˇ ㄌㄡ˙"]},
+{"g":"C","c":"申","pn":"舉手","z":"ㄕㄣ","w":"申請","wz":"ㄕㄣ ㄑㄧㄥˇ","p":"🙋","m":["甲字出頭要申請。「甲」字的上面出頭，就變成「申」。","ㄐㄧㄚˇ ㄗˋ ㄔㄨ ㄊㄡˊ ㄧㄠˋ ㄕㄣ ㄑㄧㄥˇ ㄐㄧㄚˇ ㄗˋ ㄉㄜ˙ ㄕㄤˋ ㄇㄧㄢˋ ㄔㄨ ㄊㄡˊ ㄐㄧㄡˋ ㄅㄧㄢˋ ㄔㄥˊ ㄕㄣ"],"f":["「甲」想把頭伸出來，要先舉手申請：「老師，我可以變高一點嗎？」","ㄐㄧㄚˇ ㄒㄧㄤˇ ㄅㄚˇ ㄊㄡˊ ㄕㄣ ㄔㄨ ㄌㄞˊ ㄧㄠˋ ㄒㄧㄢ ㄐㄩˇ ㄕㄡˇ ㄕㄣ ㄑㄧㄥˇ ㄌㄠˇ ㄕ ㄨㄛˇ ㄎㄜˇ ㄧˇ ㄅㄧㄢˋ ㄍㄠ ㄧˋ ㄉㄧㄢˇ ㄇㄚ˙"]},
+{"g":"C","c":"工","pn":"工人","z":"ㄍㄨㄥ","w":"工作","wz":"ㄍㄨㄥ ㄗㄨㄛˋ","p":"👷","m":["工字出頭買土地。工，就是工作，認真做事。","ㄍㄨㄥ ㄗˋ ㄔㄨ ㄊㄡˊ ㄇㄞˇ ㄊㄨˇ ㄉㄧˋ ㄍㄨㄥ ㄐㄧㄡˋ ㄕˋ ㄍㄨㄥ ㄗㄨㄛˋ ㄖㄣˋ ㄓㄣ ㄗㄨㄛˋ ㄕˋ"],"f":["老農夫工作到中午，累得像一條軟軟的麵條，躺在田邊呼呼大睡！","ㄌㄠˇ ㄋㄨㄥˊ ㄈㄨ ㄍㄨㄥ ㄗㄨㄛˋ ㄉㄠˋ ㄓㄨㄥ ㄨˇ ㄌㄟˋ ㄉㄜ˙ ㄒㄧㄤˋ ㄧˋ ㄊㄧㄠˊ ㄖㄨㄢˇ ㄖㄨㄢˇ ㄉㄜ˙ ㄇㄧㄢˋ ㄊㄧㄠˊ ㄊㄤˇ ㄗㄞˋ ㄊㄧㄢˊ ㄅㄧㄢ ㄏㄨ ㄏㄨ ㄉㄚˋ ㄕㄨㄟˋ"]},
+{"g":"C","c":"土","pn":"蚯蚓","z":"ㄊㄨˇ","w":"土地","wz":"ㄊㄨˇ ㄉㄧˋ","p":"🪱","m":["工字出頭買土地。「工」字的中間出頭，就變成「土」。","ㄍㄨㄥ ㄗˋ ㄔㄨ ㄊㄡˊ ㄇㄞˇ ㄊㄨˇ ㄉㄧˋ ㄍㄨㄥ ㄗˋ ㄉㄜ˙ ㄓㄨㄥ ㄐㄧㄢ ㄔㄨ ㄊㄡˊ ㄐㄧㄡˋ ㄅㄧㄢˋ ㄔㄥˊ ㄊㄨˇ"],"f":["「工」存了好多錢，買了一塊土地，結果只住進一隻小蚯蚓，還不付房租！","ㄍㄨㄥ ㄘㄨㄣˊ ㄌㄜ˙ ㄏㄠˇ ㄉㄨㄛ ㄑㄧㄢˊ ㄇㄞˇ ㄌㄜ˙ ㄧˊ ㄎㄨㄞˋ ㄊㄨˇ ㄉㄧˋ ㄐㄧㄝˊ ㄍㄨㄛˇ ㄓˇ ㄓㄨˋ ㄐㄧㄣˋ ㄧˋ ㄓ ㄒㄧㄠˇ ㄑㄧㄡ ㄧㄣˇ ㄏㄞˊ ㄅㄨˊ ㄈㄨˋ ㄈㄤˊ ㄗㄨ"]},
+{"g":"C","c":"刀","pn":"斧頭","z":"ㄉㄠ","w":"刀子","wz":"ㄉㄠ ㄗ˙","p":"🪓","m":["刀字出頭有力氣。刀，就是用來切東西的刀子。","ㄉㄠ ㄗˋ ㄔㄨ ㄊㄡˊ ㄧㄡˇ ㄌㄧˋ ㄑㄧˋ ㄉㄠ ㄐㄧㄡˋ ㄕˋ ㄩㄥˋ ㄌㄞˊ ㄑㄧㄝ ㄉㄨㄥ ㄒㄧ˙ ㄉㄜ˙ ㄉㄠ ㄗ˙"],"f":["小樵夫拿出刀子忙劈柴，劈得木頭大叫：「輕一點！我會痛啦！」","ㄒㄧㄠˇ ㄑㄧㄠˊ ㄈㄨ ㄋㄚˊ ㄔㄨ ㄉㄠ ㄗ˙ ㄇㄤˊ ㄆㄧ ㄔㄞˊ ㄆㄧ ㄉㄜ˙ ㄇㄨˋ ㄊㄡ˙ ㄉㄚˋ ㄐㄧㄠˋ ㄑㄧㄥ ㄧˋ ㄉㄧㄢˇ ㄨㄛˇ ㄏㄨㄟˋ ㄊㄨㄥˋ ㄌㄚ˙"]},
+{"g":"C","c":"力","pn":"手臂的肌肉","z":"ㄌㄧˋ","w":"力氣","wz":"ㄌㄧˋ ㄑㄧˋ","p":"💪","m":["刀字出頭有力氣。「刀」字出頭，就變成「力」。","ㄉㄠ ㄗˋ ㄔㄨ ㄊㄡˊ ㄧㄡˇ ㄌㄧˋ ㄑㄧˋ ㄉㄠ ㄗˋ ㄔㄨ ㄊㄡˊ ㄐㄧㄡˋ ㄅㄧㄢˋ ㄔㄥˊ ㄌㄧˋ"],"f":["「刀」吃了一大碗飯，頭冒出來，變成大力士「力」，一隻手就能舉起一頭大象！","ㄉㄠ ㄔ ㄌㄜ˙ ㄧˊ ㄉㄚˋ ㄨㄢˇ ㄈㄢˋ ㄊㄡˊ ㄇㄠˋ ㄔㄨ ㄌㄞˊ ㄅㄧㄢˋ ㄔㄥˊ ㄉㄚˋ ㄌㄧˋ ㄕˋ ㄌㄧˋ ㄧˋ ㄓ ㄕㄡˇ ㄐㄧㄡˋ ㄋㄥˊ ㄐㄩˇ ㄑㄧˇ ㄧˋ ㄊㄡˊ ㄉㄚˋ ㄒㄧㄤˋ"]},
+{"g":"C","c":"天","pn":"天空","z":"ㄊㄧㄢ","w":"天空","wz":"ㄊㄧㄢ ㄎㄨㄥ","p":"🌤️","m":["天字出頭農夫愁。天，就是我們頭上藍藍的天空。","ㄊㄧㄢ ㄗˋ ㄔㄨ ㄊㄡˊ ㄋㄨㄥˊ ㄈㄨ ㄔㄡˊ ㄊㄧㄢ ㄐㄧㄡˋ ㄕˋ ㄨㄛˇ ㄇㄣ˙ ㄊㄡˊ ㄕㄤˋ ㄌㄢˊ ㄌㄢˊ ㄉㄜ˙ ㄊㄧㄢ ㄎㄨㄥ"],"f":["天氣好，心情好，連白雲都笑成一朵棉花糖！","ㄊㄧㄢ ㄑㄧˋ ㄏㄠˇ ㄒㄧㄣ ㄑㄧㄥˊ ㄏㄠˇ ㄌㄧㄢˊ ㄅㄞˊ ㄩㄣˊ ㄉㄡ ㄒㄧㄠˋ ㄔㄥˊ ㄧˋ ㄉㄨㄛˇ ㄇㄧㄢˊ ㄏㄨㄚ ㄊㄤˊ"]},
+{"g":"C","c":"夫","pn":"農夫","z":"ㄈㄨ","w":"農夫","wz":"ㄋㄨㄥˊ ㄈㄨ","p":"👨‍🌾","m":["天字出頭農夫愁。「天」字出頭，就變成「夫」。","ㄊㄧㄢ ㄗˋ ㄔㄨ ㄊㄡˊ ㄋㄨㄥˊ ㄈㄨ ㄔㄡˊ ㄊㄧㄢ ㄗˋ ㄔㄨ ㄊㄡˊ ㄐㄧㄡˋ ㄅㄧㄢˋ ㄔㄥˊ ㄈㄨ"],"f":["農夫為什麼發愁？因為天一直不下雨，他只好對著天空大喊：「雨啊，快下來！」","ㄋㄨㄥˊ ㄈㄨ ㄨㄟˋ ㄕㄣˊ ㄇㄜ˙ ㄈㄚ ㄔㄡˊ ㄧㄣ ㄨㄟˋ ㄊㄧㄢ ㄧˋ ㄓˊ ㄅㄨˊ ㄒㄧㄚˋ ㄩˇ ㄊㄚ ㄓˇ ㄏㄠˇ ㄉㄨㄟˋ ㄓㄜ˙ ㄊㄧㄢ ㄎㄨㄥ ㄉㄚˋ ㄏㄢˇ ㄩˇ ㄚ˙ ㄎㄨㄞˋ ㄒㄧㄚˋ ㄌㄞˊ"]},
+{"g":"D","c":"細","pn":"下小雨","z":"ㄒㄧˋ","w":"細雨","wz":"ㄒㄧˋ ㄩˇ","p":"🌦️","m":["細雨灑輕舟。細，就是很小很小、很細很細。","ㄒㄧˋ ㄩˇ ㄙㄚˇ ㄑㄧㄥ ㄓㄡ ㄒㄧˋ ㄐㄧㄡˋ ㄕˋ ㄏㄣˇ ㄒㄧㄠˇ ㄏㄣˇ ㄒㄧㄠˇ ㄏㄣˇ ㄒㄧˋ ㄏㄣˇ ㄒㄧˋ"],"f":["細細的小雨，輕輕的下，螞蟻撐著樹葉當雨傘，還說：「我好時髦！」","ㄒㄧˋ ㄒㄧˋ ㄉㄜ˙ ㄒㄧㄠˇ ㄩˇ ㄑㄧㄥ ㄑㄧㄥ ㄉㄜ˙ ㄒㄧㄚˋ ㄇㄚˇ ㄧˇ ㄔㄥ ㄓㄜ˙ ㄕㄨˋ ㄧㄝˋ ㄉㄤ ㄩˇ ㄙㄢˇ ㄏㄞˊ ㄕㄨㄛ ㄨㄛˇ ㄏㄠˇ ㄕˊ ㄇㄠˊ"]},
+{"g":"D","c":"輕","pn":"羽毛","z":"ㄑㄧㄥ","w":"輕舟","wz":"ㄑㄧㄥ ㄓㄡ","p":"🪶","m":["心的小船輕輕走。輕，就是一點也不重。","ㄒㄧㄣ ㄉㄜ˙ ㄒㄧㄠˇ ㄔㄨㄢˊ ㄑㄧㄥ ㄑㄧㄥ ㄗㄡˇ ㄑㄧㄥ ㄐㄧㄡˋ ㄕˋ ㄧˋ ㄉㄧㄢˇ ㄧㄝˇ ㄅㄨˊ ㄓㄨㄥˋ"],"f":["羽毛好輕好輕，打一個噴嚏，它就飛到隔壁去了！","ㄩˇ ㄇㄠˊ ㄏㄠˇ ㄑㄧㄥ ㄏㄠˇ ㄑㄧㄥ ㄉㄚˇ ㄧˊ ㄍㄜ˙ ㄆㄣ ㄊㄧˋ ㄊㄚ ㄐㄧㄡˋ ㄈㄟ ㄉㄠˋ ㄍㄜˊ ㄅㄧˋ ㄑㄩˋ ㄌㄜ˙"]},
+{"g":"D","c":"葉","pn":"樹葉","z":"ㄧㄝˋ","w":"樹葉","wz":"ㄕㄨˋ ㄧㄝˋ","p":"🍃","m":["心是一葉舟。葉，就是樹上綠綠的葉子。","ㄒㄧㄣ ㄕˋ ㄧˊ ㄧㄝˋ ㄓㄡ ㄧㄝˋ ㄐㄧㄡˋ ㄕˋ ㄕㄨˋ ㄕㄤˋ ㄌㄩˋ ㄌㄩˋ ㄉㄜ˙ ㄧㄝˋ ㄗ˙"],"f":["一片葉子掉進河裡，變成一條小船，毛毛蟲坐上去說：「船長，出發！」","ㄧˊ ㄆㄧㄢˋ ㄧㄝˋ ㄗ˙ ㄉㄧㄠˋ ㄐㄧㄣˋ ㄏㄜˊ ㄌㄧˇ ㄅㄧㄢˋ ㄔㄥˊ ㄧˋ ㄊㄧㄠˊ ㄒㄧㄠˇ ㄔㄨㄢˊ ㄇㄠˊ ㄇㄠˊ ㄔㄨㄥˊ ㄗㄨㄛˋ ㄕㄤˋ ㄑㄩˋ ㄕㄨㄛ ㄔㄨㄢˊ ㄓㄤˇ ㄔㄨ ㄈㄚ"]},
+{"g":"D","c":"消","pn":"泡泡","z":"ㄒㄧㄠ","w":"消失","wz":"ㄒㄧㄠ ㄕ","p":"🫧","m":["快樂消失太可惜。消失，就是慢慢不見了。","ㄎㄨㄞˋ ㄌㄜˋ ㄒㄧㄠ ㄕ ㄊㄞˋ ㄎㄜˇ ㄒㄧˊ ㄒㄧㄠ ㄕ ㄐㄧㄡˋ ㄕˋ ㄇㄢˋ ㄇㄢˋ ㄅㄨˊ ㄐㄧㄢˋ ㄌㄜ˙"],"f":["「消」的左邊是三點水。肥皂泡泡飛呀飛，啵的一聲就消失了，連再見都沒說！","ㄒㄧㄠ ㄉㄜ˙ ㄗㄨㄛˇ ㄅㄧㄢ ㄕˋ ㄙㄢ ㄉㄧㄢˇ ㄕㄨㄟˇ ㄈㄟˊ ㄗㄠˋ ㄆㄠˋ ㄆㄠ˙ ㄈㄟ ㄧㄚ˙ ㄈㄟ ㄅㄛ ㄉㄜ˙ ㄧˋ ㄕㄥ ㄐㄧㄡˋ ㄒㄧㄠ ㄕ ㄌㄜ˙ ㄌㄧㄢˊ ㄗㄞˋ ㄐㄧㄢˋ ㄉㄡ ㄇㄟˊ ㄕㄨㄛ"]},
+{"g":"D","c":"惜","pn":"掉了的冰淇淋","z":"ㄒㄧˊ","w":"可惜","wz":"ㄎㄜˇ ㄒㄧˊ","p":"🍦","m":["快樂消失太可惜。可惜，就是很想要，卻沒有了，心裡覺得好捨不得。","ㄎㄨㄞˋ ㄌㄜˋ ㄒㄧㄠ ㄕ ㄊㄞˋ ㄎㄜˇ ㄒㄧˊ ㄎㄜˇ ㄒㄧˊ ㄐㄧㄡˋ ㄕˋ ㄏㄣˇ ㄒㄧㄤˇ ㄧㄠˋ ㄑㄩㄝˋ ㄇㄟˊ ㄧㄡˇ ㄌㄜ˙ ㄒㄧㄣ ㄌㄧˇ ㄐㄩㄝˊ ㄉㄜ˙ ㄏㄠˇ ㄕㄜˇ ㄅㄨ˙ ㄉㄜˊ"],"f":["冰淇淋才舔一口，就掉到地上，小狗馬上衝過來吃光光，真可惜！","ㄅㄧㄥ ㄑㄧˊ ㄌㄧㄣˊ ㄘㄞˊ ㄊㄧㄢˇ ㄧˋ ㄎㄡˇ ㄐㄧㄡˋ ㄉㄧㄠˋ ㄉㄠˋ ㄉㄧˋ ㄕㄤˋ ㄒㄧㄠˇ ㄍㄡˇ ㄇㄚˇ ㄕㄤˋ ㄔㄨㄥ ㄍㄨㄛˋ ㄌㄞˊ ㄔ ㄍㄨㄤ ㄍㄨㄤ ㄓㄣ ㄎㄜˇ ㄒㄧˊ"]},
+{"g":"D","c":"變","pn":"蝴蝶","z":"ㄅㄧㄢˋ","w":"變成","wz":"ㄅㄧㄢˋ ㄔㄥˊ","p":"🦋","m":["一下變成息，一下變成忌。變，就是換成不一樣的樣子。","ㄧˊ ㄒㄧㄚˋ ㄅㄧㄢˋ ㄔㄥˊ ㄒㄧ ㄧˊ ㄒㄧㄚˋ ㄅㄧㄢˋ ㄔㄥˊ ㄐㄧˋ ㄅㄧㄢˋ ㄐㄧㄡˋ ㄕˋ ㄏㄨㄢˋ ㄔㄥˊ ㄅㄨˋ ㄧˊ ㄧㄤˋ ㄉㄜ˙ ㄧㄤˋ ㄗ˙"],"f":["毛毛蟲睡了好久好久，醒來變成蝴蝶，嚇了一跳：「哇，我什麼時候學會飛的？」","ㄇㄠˊ ㄇㄠˊ ㄔㄨㄥˊ ㄕㄨㄟˋ ㄌㄜ˙ ㄏㄠˇ ㄐㄧㄡˇ ㄏㄠˇ ㄐㄧㄡˇ ㄒㄧㄥˇ ㄌㄞˊ ㄅㄧㄢˋ ㄔㄥˊ ㄏㄨˊ ㄉㄧㄝˊ ㄒㄧㄚˋ ㄌㄜ˙ ㄧˊ ㄊㄧㄠˋ ㄨㄚ ㄨㄛˇ ㄕㄣˊ ㄇㄜ˙ ㄕˊ ㄏㄡ˙ ㄒㄩㄝˊ ㄏㄨㄟˋ ㄈㄟ ㄉㄜ˙"]},
+{"g":"D","c":"界","pn":"地球","z":"ㄐㄧㄝˋ","w":"世界","wz":"ㄕˋ ㄐㄧㄝˋ","p":"🌏","m":["一起去看美麗新世界。世界，就是我們住的這個大大的地方。","ㄧˋ ㄑㄧˇ ㄑㄩˋ ㄎㄢˋ ㄇㄟˇ ㄌㄧˋ ㄒㄧㄣ ㄕˋ ㄐㄧㄝˋ ㄕˋ ㄐㄧㄝˋ ㄐㄧㄡˋ ㄕˋ ㄨㄛˇ ㄇㄣ˙ ㄓㄨˋ ㄉㄜ˙ ㄓㄜˋ ㄍㄜ˙ ㄉㄚˋ ㄉㄚˋ ㄉㄜ˙ ㄉㄧˋ ㄈㄤ"],"f":["小船載著我和你去看世界，看到大海、看到高山，還看到一隻會跳舞的企鵝！","ㄒㄧㄠˇ ㄔㄨㄢˊ ㄗㄞˋ ㄓㄜ˙ ㄨㄛˇ ㄏㄢˋ ㄋㄧˇ ㄑㄩˋ ㄎㄢˋ ㄕˋ ㄐㄧㄝˋ ㄎㄢˋ ㄉㄠˋ ㄉㄚˋ ㄏㄞˇ ㄎㄢˋ ㄉㄠˋ ㄍㄠ ㄕㄢ ㄏㄞˊ ㄎㄢˋ ㄉㄠˋ ㄧˋ ㄓ ㄏㄨㄟˋ ㄊㄧㄠˋ ㄨˇ ㄉㄜ˙ ㄑㄧˋ ㄜˊ"]}].concat([{"g": "E", "c": "爺", "pn": "爺爺", "z": "ㄧㄝˊ", "w": "爺爺", "wz": "ㄧㄝˊ ㄧㄝ˙", "p": "👴", "m": ["爺爺，爺爺的爺。", "ㄧㄝˊ ㄧㄝ˙ ㄧㄝˊ ㄧㄝ˙ ㄉㄜ˙ ㄧㄝˊ"]}, {"g": "E", "c": "教", "pn": "老師", "z": "ㄐㄧㄠ", "w": "教書", "wz": "ㄐㄧㄠ ㄕㄨ", "p": "👩‍🏫", "m": ["教書，教書的教。", "ㄐㄧㄠ ㄕㄨ ㄐㄧㄠ ㄕㄨ ㄉㄜ˙ ㄐㄧㄠ"]}, {"g": "E", "c": "我", "pn": "舉手的我", "z": "ㄨㄛˇ", "w": "我們", "wz": "ㄨㄛˇ ㄇㄣ˙", "p": "🙋", "m": ["我們，我們的我。", "ㄨㄛˇ ㄇㄣ˙ ㄨㄛˇ ㄇㄣ˙ ㄉㄜ˙ ㄨㄛˇ"]}, {"g": "E", "c": "寫", "pn": "寫字", "z": "ㄒㄧㄝˇ", "w": "寫字", "wz": "ㄒㄧㄝˇ ㄗˋ", "p": "✍️", "m": ["寫字，寫字的寫。", "ㄒㄧㄝˇ ㄗˋ ㄒㄧㄝˇ ㄗˋ ㄉㄜ˙ ㄒㄧㄝˇ"]}, {"g": "E", "c": "是", "pn": "比讚", "z": "ㄕˋ", "w": "就是", "wz": "ㄐㄧㄡˋ ㄕˋ", "p": "👍", "m": ["就是，就是的是。", "ㄐㄧㄡˋ ㄕˋ ㄐㄧㄡˋ ㄕˋ ㄉㄜ˙ ㄕˋ"]}, {"g": "E", "c": "一", "pn": "一根手指", "z": "ㄧ", "w": "一個", "wz": "ㄧˊ ㄍㄜ˙", "p": "☝️", "m": ["一個，一個的一。", "ㄧˊ ㄍㄜ˙ ㄧˊ ㄍㄜ˙ ㄉㄜ˙ ㄧ"]}, {"g": "E", "c": "雨", "pn": "下雨", "z": "ㄩˇ", "w": "下雨", "wz": "ㄒㄧㄚˋ ㄩˇ", "p": "🌧️", "m": ["下雨，下雨的雨。", "ㄒㄧㄚˋ ㄩˇ ㄒㄧㄚˋ ㄩˇ ㄉㄜ˙ ㄩˇ"]}, {"g": "E", "c": "點", "pn": "小黑點", "z": "ㄉㄧㄢˇ", "w": "一點", "wz": "ㄧˋ ㄉㄧㄢˇ", "p": "⚫", "m": ["一點，一點的點。", "ㄧˋ ㄉㄧㄢˇ ㄧˋ ㄉㄧㄢˇ ㄉㄜ˙ ㄉㄧㄢˇ"]}, {"g": "E", "c": "落", "pn": "落葉", "z": "ㄌㄨㄛˋ", "w": "落下", "wz": "ㄌㄨㄛˋ ㄒㄧㄚˋ", "p": "🍂", "m": ["落下，落下的落。", "ㄌㄨㄛˋ ㄒㄧㄚˋ ㄌㄨㄛˋ ㄒㄧㄚˋ ㄉㄜ˙ ㄌㄨㄛˋ"]}, {"g": "E", "c": "前", "pn": "往前", "z": "ㄑㄧㄢˊ", "w": "前面", "wz": "ㄑㄧㄢˊ ㄇㄧㄢˋ", "p": "⏩", "m": ["前面，前面的前。", "ㄑㄧㄢˊ ㄇㄧㄢˋ ㄑㄧㄢˊ ㄇㄧㄢˋ ㄉㄜ˙ ㄑㄧㄢˊ"]}, {"g": "E", "c": "中", "pn": "正中間", "z": "ㄓㄨㄥ", "w": "中間", "wz": "ㄓㄨㄥ ㄐㄧㄢ", "p": "🎯", "m": ["中間，中間的中。", "ㄓㄨㄥ ㄐㄧㄢ ㄓㄨㄥ ㄐㄧㄢ ㄉㄜ˙ ㄓㄨㄥ"]}, {"g": "E", "c": "後", "pn": "後面", "z": "ㄏㄡˋ", "w": "後面", "wz": "ㄏㄡˋ ㄇㄧㄢˋ", "p": "🔙", "m": ["後面，後面的後。", "ㄏㄡˋ ㄇㄧㄢˋ ㄏㄡˋ ㄇㄧㄢˋ ㄉㄜ˙ ㄏㄡˋ"]}, {"g": "E", "c": "的", "pn": "我的書包", "z": "ㄉㄜ˙", "w": "我的", "wz": "ㄨㄛˇ ㄉㄜ˙", "p": "🎒", "m": ["這是我的書包。", "ㄓㄜˋ ㄕˋ ㄨㄛˇ ㄉㄜ˙ ㄕㄨ ㄅㄠ"]}, {"g": "E", "c": "小", "pn": "小貓", "z": "ㄒㄧㄠˇ", "w": "小貓", "wz": "ㄒㄧㄠˇ ㄇㄠ", "p": "🐱", "m": ["小貓，小貓的小。", "ㄒㄧㄠˇ ㄇㄠ ㄒㄧㄠˇ ㄇㄠ ㄉㄜ˙ ㄒㄧㄠˇ"]}, {"g": "E", "c": "船", "pn": "帆船", "z": "ㄔㄨㄢˊ", "w": "帆船", "wz": "ㄈㄢ ㄔㄨㄢˊ", "p": "⛵", "m": ["帆船，帆船的船。", "ㄈㄢ ㄔㄨㄢˊ ㄈㄢ ㄔㄨㄢˊ ㄉㄜ˙ ㄔㄨㄢˊ"]}, {"g": "E", "c": "走", "pn": "走路", "z": "ㄗㄡˇ", "w": "走路", "wz": "ㄗㄡˇ ㄌㄨˋ", "p": "🚶", "m": ["走路，走路的走。", "ㄗㄡˇ ㄌㄨˋ ㄗㄡˇ ㄌㄨˋ ㄉㄜ˙ ㄗㄡˇ"]}, {"g": "E", "c": "上", "pn": "上面", "z": "ㄕㄤˋ", "w": "上面", "wz": "ㄕㄤˋ ㄇㄧㄢˋ", "p": "🔝", "m": ["上面，上面的上。", "ㄕㄤˋ ㄇㄧㄢˋ ㄕㄤˋ ㄇㄧㄢˋ ㄉㄜ˙ ㄕㄤˋ"]}, {"g": "E", "c": "要", "pn": "想要", "z": "ㄧㄠˋ", "w": "想要", "wz": "ㄒㄧㄤˇ ㄧㄠˋ", "p": "🙏", "m": ["想要，想要的要。", "ㄒㄧㄤˇ ㄧㄠˋ ㄒㄧㄤˇ ㄧㄠˋ ㄉㄜ˙ ㄧㄠˋ"]}, {"g": "E", "c": "什", "pn": "問號", "z": "ㄕㄣˊ", "w": "什麼", "wz": "ㄕㄣˊ ㄇㄜ˙", "p": "❓", "m": ["什麼，什麼的什。", "ㄕㄣˊ ㄇㄜ˙ ㄕㄣˊ ㄇㄜ˙ ㄉㄜ˙ ㄕㄣˊ"]}, {"g": "E", "c": "麼", "pn": "問號", "z": "ㄇㄜ˙", "w": "什麼", "wz": "ㄕㄣˊ ㄇㄜ˙", "p": "❔", "m": ["什麼，什麼的麼。", "ㄕㄣˊ ㄇㄜ˙ ㄕㄣˊ ㄇㄜ˙ ㄉㄜ˙ ㄇㄜ˙"]}, {"g": "E", "c": "呢", "pn": "問你", "z": "ㄋㄜ˙", "w": "你呢", "wz": "ㄋㄧˇ ㄋㄜ˙", "p": "🤷", "m": ["你呢，你呢的呢。", "ㄋㄧˇ ㄋㄜ˙ ㄋㄧˇ ㄋㄜ˙ ㄉㄜ˙ ㄋㄜ˙"]}, {"g": "E", "c": "只", "pn": "只有一個", "z": "ㄓˇ", "w": "只有", "wz": "ㄓˇ ㄧㄡˇ", "p": "1️⃣", "m": ["只有，只有的只。", "ㄓˇ ㄧㄡˇ ㄓˇ ㄧㄡˇ ㄉㄜ˙ ㄓˇ"]}, {"g": "E", "c": "自", "pn": "照鏡子", "z": "ㄗˋ", "w": "自己", "wz": "ㄗˋ ㄐㄧˇ", "p": "🪞", "m": ["自己，自己的自。", "ㄗˋ ㄐㄧˇ ㄗˋ ㄐㄧˇ ㄉㄜ˙ ㄗˋ"]}, {"g": "E", "c": "己", "pn": "自己", "z": "ㄐㄧˇ", "w": "自己", "wz": "ㄗˋ ㄐㄧˇ", "p": "🧍", "m": ["自己，自己的己。", "ㄗˋ ㄐㄧˇ ㄗˋ ㄐㄧˇ ㄉㄜ˙ ㄐㄧˇ"]}, {"g": "E", "c": "好", "pn": "很好", "z": "ㄏㄠˇ", "w": "很好", "wz": "ㄏㄣˇ ㄏㄠˇ", "p": "👌", "m": ["很好，很好的好。", "ㄏㄣˇ ㄏㄠˇ ㄏㄣˇ ㄏㄠˇ ㄉㄜ˙ ㄏㄠˇ"]}, {"g": "E", "c": "不", "pn": "不要", "z": "ㄅㄨˋ", "w": "不要", "wz": "ㄅㄨˊ ㄧㄠˋ", "p": "🙅", "m": ["不要，不要的不。", "ㄅㄨˊ ㄧㄠˋ ㄅㄨˊ ㄧㄠˋ ㄉㄜ˙ ㄅㄨˋ"]}, {"g": "E", "c": "下", "pn": "下面", "z": "ㄒㄧㄚˋ", "w": "下面", "wz": "ㄒㄧㄚˋ ㄇㄧㄢˋ", "p": "⬇️", "m": ["下面，下面的下。", "ㄒㄧㄚˋ ㄇㄧㄢˋ ㄒㄧㄚˋ ㄇㄧㄢˋ ㄉㄜ˙ ㄒㄧㄚˋ"]}, {"g": "E", "c": "成", "pn": "獎盃", "z": "ㄔㄥˊ", "w": "成功", "wz": "ㄔㄥˊ ㄍㄨㄥ", "p": "🏆", "m": ["成功，成功的成。", "ㄔㄥˊ ㄍㄨㄥ ㄔㄥˊ ㄍㄨㄥ ㄉㄜ˙ ㄔㄥˊ"]}, {"g": "E", "c": "愛", "pn": "兩顆愛心", "z": "ㄞˋ", "w": "愛心", "wz": "ㄞˋ ㄒㄧㄣ", "p": "💕", "m": ["愛心，愛心的愛。", "ㄞˋ ㄒㄧㄣ ㄞˋ ㄒㄧㄣ ㄉㄜ˙ ㄞˋ"]}, {"g": "E", "c": "停", "pn": "停止", "z": "ㄊㄧㄥˊ", "w": "停車", "wz": "ㄊㄧㄥˊ ㄔㄜ", "p": "🛑", "m": ["停車，停車的停。", "ㄊㄧㄥˊ ㄔㄜ ㄊㄧㄥˊ ㄔㄜ ㄉㄜ˙ ㄊㄧㄥˊ"]}, {"g": "E", "c": "行", "pn": "走路", "z": "ㄒㄧㄥˊ", "w": "步行", "wz": "ㄅㄨˋ ㄒㄧㄥˊ", "p": "🚸", "m": ["步行，步行的行。", "ㄅㄨˋ ㄒㄧㄥˊ ㄅㄨˋ ㄒㄧㄥˊ ㄉㄜ˙ ㄒㄧㄥˊ"]}, {"g": "E", "c": "快", "pn": "跑很快的獵豹", "z": "ㄎㄨㄞˋ", "w": "很快", "wz": "ㄏㄣˇ ㄎㄨㄞˋ", "p": "🐆", "m": ["很快，很快的快。", "ㄏㄣˇ ㄎㄨㄞˋ ㄏㄣˇ ㄎㄨㄞˋ ㄉㄜ˙ ㄎㄨㄞˋ"]}, {"g": "E", "c": "樂", "pn": "笑臉", "z": "ㄌㄜˋ", "w": "快樂", "wz": "ㄎㄨㄞˋ ㄌㄜˋ", "p": "😄", "m": ["快樂，快樂的樂。", "ㄎㄨㄞˋ ㄌㄜˋ ㄎㄨㄞˋ ㄌㄜˋ ㄉㄜ˙ ㄌㄜˋ"]}, {"g": "E", "c": "太", "pn": "太陽", "z": "ㄊㄞˋ", "w": "太陽", "wz": "ㄊㄞˋ ㄧㄤˊ", "p": "☀️", "m": ["太陽，太陽的太。", "ㄊㄞˋ ㄧㄤˊ ㄊㄞˋ ㄧㄤˊ ㄉㄜ˙ ㄊㄞˋ"]}, {"g": "E", "c": "可", "pn": "可以", "z": "ㄎㄜˇ", "w": "可以", "wz": "ㄎㄜˇ ㄧˇ", "p": "🙆", "m": ["可以，可以的可。", "ㄎㄜˇ ㄧˇ ㄎㄜˇ ㄧˇ ㄉㄜ˙ ㄎㄜˇ"]}, {"g": "E", "c": "還", "pn": "加號", "z": "ㄏㄞˊ", "w": "還有", "wz": "ㄏㄞˊ ㄧㄡˇ", "p": "➕", "m": ["還有，還有的還。", "ㄏㄞˊ ㄧㄡˇ ㄏㄞˊ ㄧㄡˇ ㄉㄜ˙ ㄏㄞˊ"]}, {"g": "E", "c": "著", "pn": "眼睛", "z": "ㄓㄜ˙", "w": "看著", "wz": "ㄎㄢˋ ㄓㄜ˙", "p": "👀", "m": ["看著，看著的著。", "ㄎㄢˋ ㄓㄜ˙ ㄎㄢˋ ㄓㄜ˙ ㄉㄜ˙ ㄓㄜ˙"]}, {"g": "E", "c": "你", "pn": "你", "z": "ㄋㄧˇ", "w": "你好", "wz": "ㄋㄧˇ ㄏㄠˇ", "p": "👦", "m": ["你好，你好的你。", "ㄋㄧˇ ㄏㄠˇ ㄋㄧˇ ㄏㄠˇ ㄉㄜ˙ ㄋㄧˇ"]}, {"g": "E", "c": "起", "pn": "床", "z": "ㄑㄧˇ", "w": "起床", "wz": "ㄑㄧˇ ㄔㄨㄤˊ", "p": "🛏️", "m": ["起床，起床的起。", "ㄑㄧˇ ㄔㄨㄤˊ ㄑㄧˇ ㄔㄨㄤˊ ㄉㄜ˙ ㄑㄧˇ"]}, {"g": "E", "c": "去", "pn": "旋轉木馬", "z": "ㄑㄩˋ", "w": "去玩", "wz": "ㄑㄩˋ ㄨㄢˊ", "p": "🎠", "m": ["去玩，去玩的去。", "ㄑㄩˋ ㄨㄢˊ ㄑㄩˋ ㄨㄢˊ ㄉㄜ˙ ㄑㄩˋ"]}, {"g": "E", "c": "看", "pn": "書", "z": "ㄎㄢˋ", "w": "看書", "wz": "ㄎㄢˋ ㄕㄨ", "p": "📖", "m": ["看書，看書的看。", "ㄎㄢˋ ㄕㄨ ㄎㄢˋ ㄕㄨ ㄉㄜ˙ ㄎㄢˋ"]}, {"g": "E", "c": "美", "pn": "美麗的花", "z": "ㄇㄟˇ", "w": "美麗", "wz": "ㄇㄟˇ ㄌㄧˋ", "p": "🌸", "m": ["美麗，美麗的美。", "ㄇㄟˇ ㄌㄧˋ ㄇㄟˇ ㄌㄧˋ ㄉㄜ˙ ㄇㄟˇ"]}, {"g": "E", "c": "麗", "pn": "美麗的花", "z": "ㄌㄧˋ", "w": "美麗", "wz": "ㄇㄟˇ ㄌㄧˋ", "p": "🌺", "m": ["美麗，美麗的麗。", "ㄇㄟˇ ㄌㄧˋ ㄇㄟˇ ㄌㄧˋ ㄉㄜ˙ ㄌㄧˋ"]}, {"g": "E", "c": "新", "pn": "紅包", "z": "ㄒㄧㄣ", "w": "新年", "wz": "ㄒㄧㄣ ㄋㄧㄢˊ", "p": "🧧", "m": ["新年，新年的新。", "ㄒㄧㄣ ㄋㄧㄢˊ ㄒㄧㄣ ㄋㄧㄢˊ ㄉㄜ˙ ㄒㄧㄣ"]}, {"g": "E", "c": "世", "pn": "地球", "z": "ㄕˋ", "w": "世界", "wz": "ㄕˋ ㄐㄧㄝˋ", "p": "🌐", "m": ["世界，世界的世。", "ㄕˋ ㄐㄧㄝˋ ㄕˋ ㄐㄧㄝˋ ㄉㄜ˙ ㄕˋ"]}, {"g": "F", "c": "念", "pn": "書", "z": "ㄋㄧㄢˋ", "w": "念書", "wz": "ㄋㄧㄢˋ ㄕㄨ", "p": "📕", "m": ["念書，念書的念。", "ㄋㄧㄢˋ ㄕㄨ ㄋㄧㄢˋ ㄕㄨ ㄉㄜ˙ ㄋㄧㄢˋ"]}, {"g": "F", "c": "認", "pn": "仔細看", "z": "ㄖㄣˋ", "w": "認識", "wz": "ㄖㄣˋ ㄕˋ", "p": "🧐", "m": ["認識，認識的認。", "ㄖㄣˋ ㄕˋ ㄖㄣˋ ㄕˋ ㄉㄜ˙ ㄖㄣˋ"]}, {"g": "F", "c": "識", "pn": "認真的人", "z": "ㄕˋ", "w": "認識", "wz": "ㄖㄣˋ ㄕˋ", "p": "🤓", "m": ["認識，認識的識。", "ㄖㄣˋ ㄕˋ ㄖㄣˋ ㄕˋ ㄉㄜ˙ ㄕˋ"]}, {"g": "F", "c": "部", "pn": "字", "z": "ㄅㄨˋ", "w": "部首", "wz": "ㄅㄨˋ ㄕㄡˇ", "p": "🔤", "m": ["部首，部首的部。", "ㄅㄨˋ ㄕㄡˇ ㄅㄨˋ ㄕㄡˇ ㄉㄜ˙ ㄅㄨˋ"]}, {"g": "F", "c": "氣", "pn": "吹風", "z": "ㄑㄧˋ", "w": "空氣", "wz": "ㄎㄨㄥ ㄑㄧˋ", "p": "🌬️", "m": ["空氣，空氣的氣。", "ㄎㄨㄥ ㄑㄧˋ ㄎㄨㄥ ㄑㄧˋ ㄉㄜ˙ ㄑㄧˋ"]}, {"g": "F", "c": "喜", "pn": "喜歡", "z": "ㄒㄧˇ", "w": "喜歡", "wz": "ㄒㄧˇ ㄏㄨㄢ", "p": "🥰", "m": ["喜歡，喜歡的喜。", "ㄒㄧˇ ㄏㄨㄢ ㄒㄧˇ ㄏㄨㄢ ㄉㄜ˙ ㄒㄧˇ"]}, {"g": "F", "c": "猜", "pn": "拼圖", "z": "ㄘㄞ", "w": "猜謎", "wz": "ㄘㄞ ㄇㄧˊ", "p": "🧩", "m": ["猜謎，猜謎的猜。", "ㄘㄞ ㄇㄧˊ ㄘㄞ ㄇㄧˊ ㄉㄜ˙ ㄘㄞ"]}, {"g": "F", "c": "春", "pn": "春天的花", "z": "ㄔㄨㄣ", "w": "春天", "wz": "ㄔㄨㄣ ㄊㄧㄢ", "p": "🌷", "m": ["春天，春天的春。", "ㄔㄨㄣ ㄊㄧㄢ ㄔㄨㄣ ㄊㄧㄢ ㄉㄜ˙ ㄔㄨㄣ"]}, {"g": "F", "c": "多", "pn": "很多糖果", "z": "ㄉㄨㄛ", "w": "很多", "wz": "ㄏㄣˇ ㄉㄨㄛ", "p": "🍬", "m": ["很多，很多的多。", "ㄏㄣˇ ㄉㄨㄛ ㄏㄣˇ ㄉㄨㄛ ㄉㄜ˙ ㄉㄨㄛ"]}, {"g": "F", "c": "清", "pn": "水滴", "z": "ㄑㄧㄥ", "w": "清水", "wz": "ㄑㄧㄥ ㄕㄨㄟˇ", "p": "💧", "m": ["清水，清水的清。", "ㄑㄧㄥ ㄕㄨㄟˇ ㄑㄧㄥ ㄕㄨㄟˇ ㄉㄜ˙ ㄑㄧㄥ"]}, {"g": "F", "c": "人", "pn": "人", "z": "ㄖㄣˊ", "w": "大人", "wz": "ㄉㄚˋ ㄖㄣˊ", "p": "🧑", "m": ["大人，大人的人。", "ㄉㄚˋ ㄖㄣˊ ㄉㄚˋ ㄖㄣˊ ㄉㄜ˙ ㄖㄣˊ"]}, {"g": "F", "c": "見", "pn": "握手", "z": "ㄐㄧㄢˋ", "w": "見面", "wz": "ㄐㄧㄢˋ ㄇㄧㄢˋ", "p": "🤝", "m": ["見面，見面的見。", "ㄐㄧㄢˋ ㄇㄧㄢˋ ㄐㄧㄢˋ ㄇㄧㄢˋ ㄉㄜ˙ ㄐㄧㄢˋ"]}, {"g": "F", "c": "面", "pn": "面具", "z": "ㄇㄧㄢˋ", "w": "面具", "wz": "ㄇㄧㄢˋ ㄐㄩˋ", "p": "🎭", "m": ["面具，面具的面。", "ㄇㄧㄢˋ ㄐㄩˋ ㄇㄧㄢˋ ㄐㄩˋ ㄉㄜ˙ ㄇㄧㄢˋ"]}, {"g": "F", "c": "說", "pn": "說話", "z": "ㄕㄨㄛ", "w": "說話", "wz": "ㄕㄨㄛ ㄏㄨㄚˋ", "p": "🗣️", "m": ["說話，說話的說。", "ㄕㄨㄛ ㄏㄨㄚˋ ㄕㄨㄛ ㄏㄨㄚˋ ㄉㄜ˙ ㄕㄨㄛ"]}, {"g": "F", "c": "和", "pn": "鴿子", "z": "ㄏㄜˊ", "w": "和平", "wz": "ㄏㄜˊ ㄆㄧㄥˊ", "p": "🕊️", "m": ["和平，和平的和。", "ㄏㄜˊ ㄆㄧㄥˊ ㄏㄜˊ ㄆㄧㄥˊ ㄉㄜ˙ ㄏㄜˊ"]}, {"g": "F", "c": "善", "pn": "天使", "z": "ㄕㄢˋ", "w": "善良", "wz": "ㄕㄢˋ ㄌㄧㄤˊ", "p": "😇", "m": ["善良，善良的善。", "ㄕㄢˋ ㄌㄧㄤˊ ㄕㄢˋ ㄌㄧㄤˊ ㄉㄜ˙ ㄕㄢˋ"]}, {"g": "F", "c": "相", "pn": "兩個好朋友", "z": "ㄒㄧㄤ", "w": "互相", "wz": "ㄏㄨˋ ㄒㄧㄤ", "p": "👫", "m": ["互相，互相的相。", "ㄏㄨˋ ㄒㄧㄤ ㄏㄨˋ ㄒㄧㄤ ㄉㄜ˙ ㄒㄧㄤ"]}, {"g": "F", "c": "處", "pn": "好朋友", "z": "ㄔㄨˇ", "w": "相處", "wz": "ㄒㄧㄤ ㄔㄨˇ", "p": "👭", "m": ["相處，相處的處。", "ㄒㄧㄤ ㄔㄨˇ ㄒㄧㄤ ㄔㄨˇ ㄉㄜ˙ ㄔㄨˇ"]}, {"g": "F", "c": "都", "pn": "一百分", "z": "ㄉㄡ", "w": "都是", "wz": "ㄉㄡ ㄕˋ", "p": "💯", "m": ["都是，都是的都。", "ㄉㄡ ㄕˋ ㄉㄡ ㄕˋ ㄉㄜ˙ ㄉㄡ"]}, {"g": "F", "c": "有", "pn": "表演", "z": "ㄧㄡˇ", "w": "有趣", "wz": "ㄧㄡˇ ㄑㄩˋ", "p": "🤹", "m": ["有趣，有趣的有。", "ㄧㄡˇ ㄑㄩˋ ㄧㄡˇ ㄑㄩˋ ㄉㄜ˙ ㄧㄡˇ"]}, {"g": "G", "c": "出", "pn": "門", "z": "ㄔㄨ", "w": "出門", "wz": "ㄔㄨ ㄇㄣˊ", "p": "🚪", "m": ["出門，出門的出。", "ㄔㄨ ㄇㄣˊ ㄔㄨ ㄇㄣˊ ㄉㄜ˙ ㄔㄨ"]}, {"g": "G", "c": "頭", "pn": "剪頭髮", "z": "ㄊㄡˊ", "w": "頭髮", "wz": "ㄊㄡˊ ㄈㄚˇ", "p": "💇", "m": ["頭髮，頭髮的頭。", "ㄊㄡˊ ㄈㄚˇ ㄊㄡˊ ㄈㄚˇ ㄉㄜ˙ ㄊㄡˊ"]}, {"g": "G", "c": "黃", "pn": "黃色", "z": "ㄏㄨㄤˊ", "w": "黃色", "wz": "ㄏㄨㄤˊ ㄙㄜˋ", "p": "🟡", "m": ["黃色，黃色的黃。", "ㄏㄨㄤˊ ㄙㄜˋ ㄏㄨㄤˊ ㄙㄜˋ ㄉㄜ˙ ㄏㄨㄤˊ"]}, {"g": "G", "c": "靠", "pn": "磁鐵", "z": "ㄎㄠˋ", "w": "靠近", "wz": "ㄎㄠˋ ㄐㄧㄣˋ", "p": "🧲", "m": ["靠近，靠近的靠。", "ㄎㄠˋ ㄐㄧㄣˋ ㄎㄠˋ ㄐㄧㄣˋ ㄉㄜ˙ ㄎㄠˋ"]}, {"g": "G", "c": "請", "pn": "請", "z": "ㄑㄧㄥˇ", "w": "請坐", "wz": "ㄑㄧㄥˇ ㄗㄨㄛˋ", "p": "💁", "m": ["請坐，請坐的請。", "ㄑㄧㄥˇ ㄗㄨㄛˋ ㄑㄧㄥˇ ㄗㄨㄛˋ ㄉㄜ˙ ㄑㄧㄥˇ"]}, {"g": "G", "c": "買", "pn": "購物車", "z": "ㄇㄞˇ", "w": "買菜", "wz": "ㄇㄞˇ ㄘㄞˋ", "p": "🛒", "m": ["買菜，買菜的買。", "ㄇㄞˇ ㄘㄞˋ ㄇㄞˇ ㄘㄞˋ ㄉㄜ˙ ㄇㄞˇ"]}, {"g": "G", "c": "地", "pn": "地圖", "z": "ㄉㄧˋ", "w": "地圖", "wz": "ㄉㄧˋ ㄊㄨˊ", "p": "🗺️", "m": ["地圖，地圖的地。", "ㄉㄧˋ ㄊㄨˊ ㄉㄧˋ ㄊㄨˊ ㄉㄜ˙ ㄉㄧˋ"]}, {"g": "G", "c": "農", "pn": "拖拉機", "z": "ㄋㄨㄥˊ", "w": "農田", "wz": "ㄋㄨㄥˊ ㄊㄧㄢˊ", "p": "🚜", "m": ["農田，農田的農。", "ㄋㄨㄥˊ ㄊㄧㄢˊ ㄋㄨㄥˊ ㄊㄧㄢˊ ㄉㄜ˙ ㄋㄨㄥˊ"]}, {"g": "G", "c": "愁", "pn": "擔心的臉", "z": "ㄔㄡˊ", "w": "發愁", "wz": "ㄈㄚ ㄔㄡˊ", "p": "😟", "m": ["發愁，發愁的愁。", "ㄈㄚ ㄔㄡˊ ㄈㄚ ㄔㄡˊ ㄉㄜ˙ ㄔㄡˊ"]}, {"g": "G", "c": "應", "pn": "打勾", "z": "ㄧㄥ", "w": "應該", "wz": "ㄧㄥ ㄍㄞ", "p": "✅", "m": ["應該，應該的應。", "ㄧㄥ ㄍㄞ ㄧㄥ ㄍㄞ ㄉㄜ˙ ㄧㄥ"]}, {"g": "G", "c": "該", "pn": "打勾", "z": "ㄍㄞ", "w": "應該", "wz": "ㄧㄥ ㄍㄞ", "p": "☑️", "m": ["應該，應該的該。", "ㄧㄥ ㄍㄞ ㄧㄥ ㄍㄞ ㄉㄜ˙ ㄍㄞ"]}, {"g": "G", "c": "別", "pn": "別人", "z": "ㄅㄧㄝˊ", "w": "別人", "wz": "ㄅㄧㄝˊ ㄖㄣˊ", "p": "👥", "m": ["別人，別人的別。", "ㄅㄧㄝˊ ㄖㄣˊ ㄅㄧㄝˊ ㄖㄣˊ ㄉㄜ˙ ㄅㄧㄝˊ"]}]);
+const $=s=>document.querySelector(s),main=$('#main');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const isC=ch=>/[\u4e00-\u9fff]/.test(ch);
+const GN={A:'📖 課文生字',B:'❤️ 心字家族',C:'🌱 出頭歌',D:'✨ 課文常用字',E:'⛵ 課文的字',F:'🌸 我會認字',G:'🌱 出頭歌的字'};
+let SET={zy:true,n:2,slow:false,g:['A','B','C','D']};try{Object.assign(SET,JSON.parse(localStorage.getItem('cloud-g3l1')||'{}'))}catch(e){}
+SET.g=['A','B','C','D','E','F','G'];
+const LIST=()=>W.filter(x=>SET.g.includes(x.g));
+const saveSet=()=>{try{localStorage.setItem('cloud-g3l1',JSON.stringify(SET))}catch(e){}};
+function applySet(){document.body.classList.toggle('zyoff',!SET.zy);$('#zy').classList.toggle('on',SET.zy);$('#nopt2').textContent=SET.n+'個';$('#zyl').textContent=SET.zy?'注音：開':'注音：關';$('#slow').classList.toggle('on',SET.slow)}
+/* 注音 */
+function rb(t,z,hl){const zs=z.split(' ');let k=0,o='';for(const ch of t){if(isC(ch)){const r=`<ruby>${ch}<rt>${zs[k++]||''}</rt></ruby>`;o+=ch===hl?`<span class="hl">${r}</span>`:r}else o+=ch}return o}
+function rbBlank(t,z,c){const zs=z.split(' ');let k=0,o='';for(const ch of t){if(isC(ch)){const zy=zs[k++]||'';o+=ch===c?`<ruby><span class="box">？</span><rt>${zy}</rt></ruby>`:`<ruby>${ch}<rt>${zy}</rt></ruby>`}else o+=ch}return o}
+/* 朗讀：長的說明一句一句念，手機才不會念到一半停掉 */
+let VO=null,TOK=0;function pickV(){try{const vs=speechSynthesis.getVoices().filter(v=>/^(zh|cmn)/i.test(v.lang));VO=vs.find(v=>/TW|Hant/i.test(v.lang))||null}catch(e){}}
+if('speechSynthesis' in window){pickV();speechSynthesis.onvoiceschanged=pickV}
+function say(t,cb){if(!('speechSynthesis' in window)||!t){const my0=++TOK;if(cb&&t)setTimeout(()=>{if(my0===TOK)cb()},String(t).length*260);return}const my=++TOK;try{speechSynthesis.cancel()}catch(e){}
+  const parts=String(t).replace(/[「」]/g,'').replace(/著/g,'者').replace(/差一點/g,'叉一點').match(/[^。！？]+[。！？]?/g)||[t];let i=0;
+  const nx=()=>{if(my!==TOK)return;if(i>=parts.length){if(cb)cb();return}const u=new SpeechSynthesisUtterance(parts[i++]);u.lang='zh-TW';u.rate=SET.slow?.65:.85;if(VO)u.voice=VO;
+    let d=false;const go=()=>{if(d)return;d=true;nx()};u.onend=go;u.onerror=go;setTimeout(go,2500+u.text.length*500);speechSynthesis.speak(u)};
+  setTimeout(nx,90)}
+const ph=x=>`${x.w}的${x.c}`;
+const fullSay=x=>`${ph(x)}。${x.m[0]}${x.f?x.f[0]:''}`;
+/* 音效、慶祝 */
+let AC=null;function tone(f,d,delay){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.setValueAtTime(.15,AC.currentTime+delay);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+delay+d);o.connect(g);g.connect(AC.destination);o.start(AC.currentTime+delay);o.stop(AC.currentTime+delay+d)}catch(e){}}
+const ding=()=>[784,988,1319].forEach((f,i)=>tone(f,.35,i*.09));
+function confetti(n){const em=['☁️','🌈','⭐','💧','☀️','✨'];for(let i=0;i<n;i++){const s=document.createElement('span');s.className='conf';s.textContent=em[i%em.length];s.style.left=Math.random()*96+'vw';s.style.animationDelay=Math.random()+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),4200)}}
+function praise(t){const d=document.createElement('div');d.className='praise';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),1600)}
+/* 上方進度：每認識一個字，就亮一顆太陽 */
+let DONE=new Set();
+function dots(){const bal=MODE==='balloon'&&ORDER.length;const n=bal?ORDER.length:LIST().length,v=bal?CNT:DONE.size;$('#dots').innerHTML=`<span class="cnt">☀️ ${v} / ${n}</span><span class="bar"><b style="width:${n?v/n*100:0}%"></b></span>`}
+/* 介紹卡 */
+function cardHTML(x){return`<div class="pic">${x.p}</div><div class="big" data-s="c">${rb(x.c,x.z)}</div><div class="word" data-s="w">${rb(x.w,x.wz,x.c)}</div>
+  <div class="say" data-s="m">${rb(x.m[0],x.m[1],x.c)}</div>${x.f?`<div class="say fun" data-s="f">😆 ${rb(x.f[0],x.f[1],x.c)}</div>`:''}`}
+function bindCard(root,x,cb){root.querySelectorAll('[data-s]').forEach(el=>el.onclick=()=>{clearTimeout(TM);const k=el.dataset.s;say(k==='c'?ph(x):k==='w'?x.w:k==='m'?x.m[0]:(x.f?x.f[0]:''),cb)})}
+let TM=null;
+/* 關卡：每關 5 個字（最後剩下不到 3 個字，就併進前一關） */
+const LEVELS=()=>{const L=LIST(),o=[];for(let i=0;i<L.length;i+=5)o.push(L.slice(i,i+5));if(o.length>1&&o[o.length-1].length<3)o[o.length-2]=o[o.length-2].concat(o.pop());return o};
+let LV=0;try{LV=+localStorage.getItem('balloon-level-g3l1')||0}catch(e){}
+const saveLv=()=>{try{localStorage.setItem('balloon-level-g3l1',LV)}catch(e){}};
+if(SET.bird===undefined)SET.bird=true;
+const HOME_SAY='點「國字氣球」，玩氣球遊戲。點「認識國字」，先認識新的字。';
+let HOME_SAID=false;
+function startScreen(){clearTimeout(TM);MODE='';DONE=new Set();dots();
+  main.innerHTML=`<div class="pic" style="font-size:4.4rem">📖🎈</div><div class="title">字的小旅行</div><div class="tag">國語三年級　第一課</div>
+  <button class="btn y bigbtn" id="go2" style="margin-top:.6rem">🎈 國字氣球</button>
+  <div class="tag">目前：第 ${Math.min(LV,LEVELS().length-1)+1} 關（共 ${LEVELS().length} 關，${W.length} 個字）</div>
+  <div class="hint" style="font-size:1.2rem">每一關有 5 個字，先出現一次，<br>再換順序出現一次。</div>
+  <button class="btn bigbtn" id="go1" style="margin-top:1rem">📖 認識國字</button>
+  ${'speechSynthesis' in window?'':'<div class="hint" style="color:#c0392b">這個瀏覽器沒有聲音。請改用 Chrome 或 Safari 開啟。</div>'}`;
+  $('#go1').onclick=()=>intro(0);$('#go2').onclick=()=>bPlay(LV);
+  if(HOME_SAID)say(HOME_SAY)}
+document.addEventListener('pointerdown',()=>{if(!HOME_SAID){HOME_SAID=true;if($('#go1'))say(HOME_SAY)}},{capture:true,once:true});
+let AUTO=true;
+function intro(i){clearTimeout(TM);const L=LIST(),x=L[i];
+  main.innerHTML=`<div class="tag">認識新朋友　第 ${i+1} / ${L.length} 個字　<small>${GN[x.g]}</small></div><div class="card" id="cd">${cardHTML(x)}</div>
+  <div class="row"><button class="btn w" id="pv" ${i?'':'disabled'}>⬅ 上一個</button><button class="btn y" id="hr">🔊 再聽一次</button><button class="btn w" id="ps">${AUTO?'⏸ 暫停':'▶ 自動播放'}</button><button class="btn" id="nx">${i<L.length-1?'下一個 ➜':'🎈 去玩國字氣球！'}</button></div>
+  <div class="row"><button class="btn skip" id="sk">🎈 直接玩國字氣球</button></div>
+  <div class="hint" id="ah">${AUTO?'唸完會自動換下一個字':'已暫停，想看下一個字請按「下一個」'}</div>`;
+  const goOn=()=>{clearTimeout(TM);i<L.length-1?intro(i+1):toPlay()};
+  const after=()=>{if(AUTO)TM=setTimeout(goOn,1800)};
+  bindCard($('#cd'),x,after);say(fullSay(x),after);
+  $('#hr').onclick=()=>{clearTimeout(TM);say(fullSay(x),after)};
+  $('#ps').onclick=()=>{AUTO=!AUTO;clearTimeout(TM);$('#ps').textContent=AUTO?'⏸ 暫停':'▶ 自動播放';$('#ah').textContent=AUTO?'唸完會自動換下一個字':'已暫停，想看下一個字請按「下一個」';if(AUTO)say(fullSay(x),after);else{TOK++;try{speechSynthesis.cancel()}catch(e){}}};
+  $('#pv').onclick=()=>{clearTimeout(TM);intro(i-1)};$('#sk').onclick=()=>{clearTimeout(TM);TOK++;try{speechSynthesis.cancel()}catch(e){}bPlay(LV)};$('#nx').onclick=goOn}
+function toPlay(){clearTimeout(TM);main.innerHTML=`<div class="pic" style="font-size:5rem">🎈🐦🎈</div><div class="title">準備好了嗎？</div><div class="hint" style="font-size:1.4rem">我們去玩國字氣球！</div><div class="row"><button class="btn y bigbtn" id="gp">🎈 國字氣球</button></div>`;
+  $('#gp').onclick=()=>bPlay(LV);say('準備好了嗎？我們去玩國字氣球！',()=>{TM=setTimeout(()=>bPlay(LV),900)})}
+/* 雲朵遊戲 */
+let ORDER=[],I=0,LOCK=false,STK=[],PL=[],MODE='cloud';
+function play(){MODE='cloud';PL=LIST();ORDER=shuffle(PL.map((x,i)=>i));I=0;STK=[];DONE=new Set();dots();round()}
+const POS={2:[[27,42],[73,62]],3:[[22,36],[76,40],[50,74]]};
+function round(){clearTimeout(TM);LOCK=false;const x=PL[ORDER[I]];
+  let pool=PL.filter(y=>y.c!==x.c&&y.w!==x.w);if(pool.length<SET.n-1)pool=W.filter(y=>y.c!==x.c&&y.w!==x.w);
+  const opts=shuffle([x].concat(shuffle(pool).slice(0,SET.n-1)));const pos=shuffle(POS[SET.n]);
+  main.innerHTML=`<div class="ask"><span class="pic">${x.p}</span><span class="word">${rbBlank(x.w,x.wz,x.c)}</span><button class="btn y" id="hr" style="min-height:3rem;font-size:1.2rem">🔊 再聽</button><button class="btn w" id="tip" style="min-height:3rem;font-size:1.2rem">💡 看介紹</button></div>
+  <div class="hint">第 ${I+1} / ${ORDER.length} 題　聽一聽，點出對的雲朵</div>
+  <div class="sky" id="sky"><span class="sunny">☀️</span>${opts.map((y,k)=>`<button class="cloud" data-k="${k}" style="--x:${pos[k][0]}%;--y:${pos[k][1]}%;--d:${(5+k*1.3).toFixed(1)}s;--dl:-${k*1.7}s"><span class="osp" data-k="${k}">🔊</span><span class="ch">${y.c}</span><span class="face">◡</span></button>`).join('')}</div>
+  <div class="stk">${STK.map(y=>`<span>${y.p.split(/(?=\p{Extended_Pictographic})/u)[0]}</span>`).join('')}</div>`;
+  const ask=()=>say(`請點出，${ph(x)}。`);ask();
+  $('#hr').onclick=ask;$('#tip').onclick=()=>showTip(x);
+  const cs=[...main.querySelectorAll('.cloud')];
+  main.querySelectorAll('.osp').forEach(s=>s.onclick=e=>{e.stopPropagation();say(ph(opts[+s.dataset.k]))});
+  cs.forEach(c=>c.onclick=()=>{if(LOCK)return;const y=opts[+c.dataset.k];
+    if(y.c===x.c){LOCK=true;c.classList.add('ok');c.querySelector('.face').textContent='😄';cs.forEach(o=>{if(o!==c)o.classList.add('dim')});ding();rainFrom(c);
+      if(!STK.includes(x))STK.push(x);DONE.add(x.c);dots();
+      const p=['答對了！','好棒！','你好厲害！','太棒了！','雲朵說謝謝！'][Math.floor(Math.random()*5)];praise(p);say(`${p}${ph(x)}。`);
+      TM=setTimeout(()=>{I++;I>=ORDER.length?finish():round()},2600)}
+    else{c.classList.add('bad');tone(220,.2,0);say(`這朵雲是，${ph(y)}。再找找看。`);
+      const left=cs.filter(o=>!o.classList.contains('bad'));if(left.length>1)cs.find(o=>opts[+o.dataset.k].c===x.c).classList.add('glow')}})}
+function rainFrom(c){const sky=$('#sky'),r=c.getBoundingClientRect(),s=sky.getBoundingClientRect();
+  const rb2=document.createElement('span');rb2.className='rain';rb2.textContent='🌈';rb2.style.left=(r.left-s.left+r.width/2)+'px';rb2.style.top=(r.top-s.top-20)+'px';sky.appendChild(rb2);
+  for(let i=0;i<6;i++){const d=document.createElement('span');d.className='drop';d.textContent='💧';d.style.left=(r.left-s.left+r.width*(.15+i*.14))+'px';d.style.top=(r.bottom-s.top-10)+'px';d.style.animationDelay=(i*.08)+'s';sky.appendChild(d)}}
+function showTip(x){const bg=document.createElement('div');bg.className='modalbg';
+  bg.innerHTML=`<div class="card">${cardHTML(x)}<div class="row" style="margin-top:.5rem"><button class="btn y" id="th">🔊 聽一聽</button><button class="btn" id="tc">我知道了</button></div></div>`;
+  document.body.appendChild(bg);bindCard(bg,x);say(fullSay(x));
+  bg.querySelector('#th').onclick=()=>say(fullSay(x));bg.querySelector('#tc').onclick=()=>{bg.remove();say(`請點出，${ph(x)}。`)};
+  bg.onclick=e=>{if(e.target===bg)bg.remove()}}
+/* 看字找圖：看到國字，點出對的圖 */
+function picPlay(){MODE='pic';PL=LIST();ORDER=shuffle(PL.map((x,i)=>i));I=0;STK=[];DONE=new Set();dots();picRound()}
+const FPOS={2:[[27,63],[73,82]],3:[[21,60],[79,66],[50,86]]};
+const FCOL=['#ff9f6b','#ffd95a','#8fdc7a','#ff9ec0'];
+function picRound(){clearTimeout(TM);LOCK=false;const x=PL[ORDER[I]];
+  let pool=PL.filter(y=>y.c!==x.c&&y.w!==x.w);if(pool.length<SET.n-1)pool=W.filter(y=>y.c!==x.c&&y.w!==x.w);
+  const opts=shuffle([x].concat(shuffle(pool).slice(0,SET.n-1)));const pos=shuffle(FPOS[SET.n]);const col=shuffle(FCOL);
+  main.innerHTML=`<div class="tag">🎣 小河釣魚　第 ${I+1} / ${ORDER.length} 題　<small>這個字，是哪一條魚？</small></div>
+  <div class="pond" id="pond"><span class="sun2">☀️</span><span class="reed l">🌾</span><span class="reed r">🌿</span>
+   <div class="boatw"><div class="sign" id="bc">${rb(x.c,x.z)}</div><div class="boatline"><span class="rod">🎣</span><span class="bt">🛶</span></div></div>
+   ${opts.map((y,k)=>`<button class="fish ${k%2?'flip':''}" data-k="${k}" style="--x:${pos[k][0]}%;--y:${pos[k][1]}%;--c:${col[k]};--d:${(3.6+k*.9).toFixed(1)}s;--dl:-${k*1.3}s"><span class="fb"><span class="eye"></span><span class="pe">${y.p}</span></span><span class="osp" data-k="${k}">🔊</span></button>`).join('')}
+  </div>
+  <div class="row"><button class="btn y" id="hr" style="min-height:3rem;font-size:1.2rem">🔊 聽這個字</button><button class="btn w" id="tip" style="min-height:3rem;font-size:1.2rem">💡 看介紹</button></div>
+  <div class="stk">${STK.map(y=>`<span>${y.p}</span>`).join('')}</div>`;
+  say('小魚身上有圖。這個字，是哪一條魚？');
+  $('#hr').onclick=()=>say(ph(x));$('#bc').onclick=()=>say(ph(x));$('#tip').onclick=()=>showTip(x);
+  const pond=$('#pond'),cs=[...main.querySelectorAll('.fish')];
+  main.querySelectorAll('.fish .osp').forEach(s=>s.onclick=e=>{e.stopPropagation();say(opts[+s.dataset.k].pn)});
+  cs.forEach(c=>c.onclick=()=>{if(LOCK)return;const y=opts[+c.dataset.k];
+    if(y.c===x.c){LOCK=true;cs.forEach(o=>{if(o!==c)o.classList.add('dim')});reelIn(pond,c);ding();
+      if(!STK.includes(x))STK.push(x);DONE.add(x.c);dots();
+      const p=['釣到了！','好棒！','你好厲害！','大魚上鉤了！'][Math.floor(Math.random()*4)];setTimeout(()=>praise(p),700);say(`${p}這是，${ph(x)}。`);
+      TM=setTimeout(()=>{I++;I>=ORDER.length?finish():picRound()},2900)}
+    else{c.classList.add('away');tone(220,.2,0);splashText(pond,c,'噗通！');say(`這條魚是${y.pn}，是${ph(y)}。再找找看。`);
+      const left=cs.filter(o=>!o.classList.contains('away'));if(left.length>1)cs.find(o=>opts[+o.dataset.k].c===x.c).classList.add('glow')}})}
+function splashText(pond,c,t){const r=c.getBoundingClientRect(),s=pond.getBoundingClientRect();const e=document.createElement('span');e.className='splash';e.textContent=t;e.style.left=(r.left-s.left+r.width/2)+'px';e.style.top=(r.top-s.top)+'px';pond.appendChild(e);setTimeout(()=>e.remove(),1200)}
+function reelIn(pond,c){const s=pond.getBoundingClientRect(),r=c.getBoundingClientRect(),rod=pond.querySelector('.rod').getBoundingClientRect();
+  const fx=r.left-s.left+r.width/2,fy=r.top-s.top+r.height/2,tx=rod.left-s.left+rod.width/2,ty=rod.bottom-s.top;
+  const ln=document.createElement('span');ln.className='fline';ln.style.left=fx+'px';ln.style.top=ty+'px';ln.style.height=(fy-ty)+'px';pond.appendChild(ln);
+  splashText(pond,c,'💦');
+  const cx=c.offsetLeft,cy=c.offsetTop;c.classList.remove('glow');c.classList.add('caught');
+  requestAnimationFrame(()=>{c.style.transform=`translate(-50%,-50%) translate(${tx-fx}px,${ty-fy+20}px) scale(.7) rotate(-25deg)`;ln.style.left=tx+'px';ln.style.height='20px'})}
+const GAMES={balloon:['🎈 國字氣球',()=>bPlay(LV),'氣球都飛上天了！']};
+function finish(){confetti(40);ding();const G=GAMES[MODE];
+  main.innerHTML=`<div class="pic" style="font-size:4rem">🌈☀️🌈</div><div class="title">${G[2]}</div>
+  <div class="hint" style="font-size:1.3rem">你認識了 ${STK.length} 個字。點一點，再聽一次它們的故事。</div>
+  <div class="grid">${STK.map((x,i)=>`<button data-i="${i}">${x.p}<small>${rb(x.c,x.z)}</small></button>`).join('')}</div>
+  <div class="row"><button class="btn" id="again">🔁 再玩一次${G[0]}</button>${Object.keys(GAMES).filter(k=>k!==MODE).map(k=>`<button class="btn skip ${k==='pic'?'pk':k==='zy'?'fr':''}" data-g="${k}">${GAMES[k][0]}</button>`).join('')}<button class="btn w" id="back">📖 認識國字</button></div>`;
+  say(`好棒！${G[2]}你認識了${STK.length}個字。`);
+  main.querySelectorAll('.grid button').forEach(b=>b.onclick=()=>showTip(STK[+b.dataset.i]));
+  main.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>GAMES[b.dataset.g][1]());
+  $('#again').onclick=G[1];$('#back').onclick=()=>intro(0)}
+/* 注音跳荷葉：看注音、聽聲音，跳到對的字 */
+function zyPlay(){MODE='zy';PL=LIST();ORDER=shuffle(PL.map((x,i)=>i));I=0;STK=[];DONE=new Set();dots();zyRound()}
+const PPOS={2:[[28,40],[72,40]],3:[[18,42],[50,30],[82,42]]};
+function zyRound(){clearTimeout(TM);LOCK=false;const x=PL[ORDER[I]];
+  let pool=PL.filter(y=>y.c!==x.c&&y.z!==x.z);if(pool.length<SET.n-1)pool=W.filter(y=>y.c!==x.c&&y.z!==x.z);
+  const opts=shuffle([x].concat(shuffle(pool).slice(0,SET.n-1)));const pos=PPOS[SET.n];
+  main.innerHTML=`<div class="tag">🐸 注音跳荷葉　第 ${I+1} / ${ORDER.length} 題　<small>看注音，跳到對的字</small></div>
+  <div class="zcard" id="zc"><span class="zz">${x.z}</span><span class="zs">🔊</span></div>
+  <div class="lake" id="lake"><span class="lotus a">🪷</span><span class="lotus b">🪷</span>
+   ${opts.map((y,k)=>`<button class="pad2" data-k="${k}" style="--x:${pos[k][0]}%;--y:${pos[k][1]}%;--dl:-${k*1.1}s"><span class="pc">${y.c}</span><span class="osp" data-k="${k}">🔊</span></button>`).join('')}
+   <span class="frog2" id="frog">🐸</span></div>
+  <div class="row"><button class="btn y" id="hr" style="min-height:3rem;font-size:1.2rem">🔊 再聽一次</button><button class="btn w" id="tip" style="min-height:3rem;font-size:1.2rem">💡 看介紹</button></div>
+  <div class="stk">${STK.map(y=>`<span>${y.p}</span>`).join('')}</div>`;
+  const ask=()=>say(`請跳到，${ph(x)}。`);ask();
+  $('#hr').onclick=ask;$('#zc').onclick=ask;$('#tip').onclick=()=>showTip(x);
+  const lake=$('#lake'),frog=$('#frog'),cs=[...main.querySelectorAll('.pad2')];
+  main.querySelectorAll('.pad2 .osp').forEach(s=>s.onclick=e=>{e.stopPropagation();say(ph(opts[+s.dataset.k]))});
+  const jump=(c,cb)=>{const s=lake.getBoundingClientRect(),r=c.getBoundingClientRect(),f=frog.getBoundingClientRect();
+    frog.style.transform=`translate(${r.left+r.width/2-(f.left+f.width/2)}px,${r.top+r.height*.35-(f.top+f.height/2)}px)`;frog.classList.add('hop');setTimeout(cb,750)};
+  cs.forEach(c=>c.onclick=()=>{if(LOCK)return;const y=opts[+c.dataset.k];
+    if(y.c===x.c){LOCK=true;cs.forEach(o=>{if(o!==c)o.classList.add('dim')});
+      jump(c,()=>{c.classList.add('ok');frog.classList.remove('hop');ding();splashText(lake,c,'⭐')});
+      if(!STK.includes(x))STK.push(x);DONE.add(x.c);dots();
+      const p=['跳對了！','好棒！','你好厲害！','呱呱，太棒了！'][Math.floor(Math.random()*4)];setTimeout(()=>praise(p),700);say(`${p}這是，${ph(x)}。`);
+      TM=setTimeout(()=>{I++;I>=ORDER.length?finish():zyRound()},2900)}
+    else{c.classList.add('sink');tone(220,.2,0);splashText(lake,c,'噗通！');say(`這是${ph(y)}，再找找看。`);
+      const left=cs.filter(o=>!o.classList.contains('sink'));if(left.length>1)cs.find(o=>opts[+o.dataset.k].c===x.c).classList.add('glow')}})}
+/* 近似字：氣球裡的錯誤選項，用長得很像的字 */
+const SIM={"字": [["子", "孩子的子"], ["宇", "宇宙的宇"]], "舟": [["丹", "牡丹的丹"], ["母", "母親的母"]], "灑": [["曬", "曬衣服的曬"], ["儷", "伉儷的儷"]], "載": [["戴", "戴帽子的戴"], ["栽", "栽種的栽"]], "航": [["杭", "杭州的杭"], ["抗", "抵抗的抗"]], "忌": [["忘", "忘記的忘"], ["志", "志氣的志"]], "妒": [["妙", "奇妙的妙"], ["如", "如果的如"]], "失": [["夫", "丈夫的夫"], ["先", "先生的先"]], "讓": [["壤", "土壤的壤"], ["嚷", "叫嚷的嚷"]], "您": [["你", "你好的你"], ["悠", "悠閒的悠"]], "揮": [["輝", "光輝的輝"], ["渾", "渾身的渾"]], "整": [["正", "正確的正"], ["政", "政府的政"]], "心": [["必", "必須的必"], ["火", "火車的火"]], "息": [["自", "自己的自"], ["思", "思考的思"]], "恭": [["共", "共同的共"], ["泰", "泰國的泰"]], "情": [["清", "清水的清"], ["晴", "晴天的晴"]], "思": [["恩", "恩人的恩"], ["忠", "忠心的忠"]], "休": [["林", "樹林的林"], ["伏", "埋伏的伏"]], "田": [["由", "自由的由"], ["甲", "指甲的甲"]], "由": [["田", "稻田的田"], ["申", "申請的申"]], "午": [["牛", "黃牛的牛"], ["千", "一千的千"]], "牛": [["午", "中午的午"], ["生", "生日的生"]], "石": [["右", "右邊的右"], ["古", "古代的古"]], "右": [["石", "石頭的石"], ["左", "左邊的左"]], "甲": [["申", "申請的申"], ["田", "稻田的田"]], "申": [["甲", "指甲的甲"], ["由", "自由的由"]], "工": [["土", "土地的土"], ["士", "士兵的士"]], "土": [["士", "士兵的士"], ["工", "工作的工"]], "刀": [["力", "力氣的力"], ["刃", "刀刃的刃"]], "力": [["刀", "刀子的刀"], ["九", "九個的九"]], "天": [["夫", "農夫的夫"], ["大", "大人的大"]], "夫": [["天", "天空的天"], ["失", "消失的失"]], "細": [["組", "組長的組"], ["紳", "紳士的紳"]], "輕": [["經", "經過的經"], ["頸", "長頸鹿的頸"]], "葉": [["菜", "青菜的菜"], ["業", "作業的業"]], "消": [["削", "削鉛筆的削"], ["宵", "元宵的宵"]], "惜": [["借", "借東西的借"], ["錯", "錯誤的錯"]], "變": [["彎", "彎腰的彎"], ["蠻", "野蠻的蠻"]], "界": [["介", "介紹的介"], ["果", "水果的果"]], "爺": [["爸", "爸爸的爸"], ["耶", "耶誕節的耶"]], "教": [["孝", "孝順的孝"], ["救", "救命的救"]], "我": [["找", "找東西的找"], ["義", "正義的義"]], "寫": [["鳥", "小鳥的鳥"], ["寶", "寶貝的寶"]], "是": [["早", "早上的早"], ["足", "手足的足"]], "一": [["二", "一二三的二"], ["十", "十個的十"]], "雨": [["兩", "兩個的兩"], ["雪", "下雪的雪"]], "點": [["黑", "黑色的黑"], ["店", "商店的店"]], "落": [["客", "客人的客"], ["洛", "洛神花的洛"]], "前": [["剪", "剪刀的剪"], ["煎", "煎蛋的煎"]], "中": [["申", "申請的申"], ["串", "一串的串"]], "後": [["很", "很好的很"], ["復", "復活的復"]], "的": [["約", "約定的約"], ["釣", "釣魚的釣"]], "小": [["少", "多少的少"], ["水", "喝水的水"]], "船": [["般", "一般的般"], ["沿", "沿著的沿"]], "走": [["起", "起床的起"], ["足", "手足的足"]], "上": [["下", "下面的下"], ["止", "停止的止"]], "要": [["耍", "玩耍的耍"], ["票", "車票的票"]], "什": [["汁", "果汁的汁"], ["計", "計算的計"]], "麼": [["磨", "磨刀的磨"], ["魔", "魔術的魔"]], "呢": [["泥", "泥土的泥"], ["吃", "吃飯的吃"]], "只": [["兄", "兄弟的兄"], ["叭", "喇叭的叭"]], "自": [["白", "白色的白"], ["目", "題目的目"]], "己": [["已", "已經的已"], ["巴", "嘴巴的巴"]], "好": [["如", "如果的如"], ["妙", "奇妙的妙"]], "不": [["下", "下面的下"], ["木", "木頭的木"]], "下": [["不", "不要的不"], ["上", "上面的上"]], "成": [["城", "城市的城"], ["威", "威風的威"]], "愛": [["受", "接受的受"], ["憂", "憂愁的憂"]], "停": [["亭", "涼亭的亭"], ["傍", "傍晚的傍"]], "行": [["往", "往前的往"], ["街", "街道的街"]], "快": [["決", "決定的決"], ["塊", "一塊的塊"]], "樂": [["藥", "吃藥的藥"], ["爍", "閃爍的爍"]], "太": [["大", "大人的大"], ["犬", "警犬的犬"]], "可": [["司", "司機的司"], ["何", "如何的何"]], "還": [["環", "環境的環"], ["遠", "遠方的遠"]], "著": [["者", "作者的者"], ["暑", "暑假的暑"]], "你": [["您", "您好的您"], ["休", "休息的休"]], "起": [["超", "超人的超"], ["越", "越來越的越"]], "去": [["丟", "丟球的丟"], ["法", "方法的法"]], "看": [["眉", "眉毛的眉"], ["首", "首先的首"]], "美": [["羊", "小羊的羊"], ["義", "正義的義"]], "麗": [["鹿", "小鹿的鹿"], ["灑", "灑水的灑"]], "新": [["親", "親人的親"], ["薪", "薪水的薪"]], "世": [["也", "也是的也"], ["甘", "甘甜的甘"]], "念": [["今", "今天的今"], ["含", "含著的含"]], "認": [["忍", "忍耐的忍"], ["記", "記得的記"]], "識": [["織", "織毛衣的織"], ["職", "職業的職"]], "部": [["陪", "陪伴的陪"], ["剖", "解剖的剖"]], "氣": [["汽", "汽車的汽"], ["氧", "氧氣的氧"]], "喜": [["嘉", "嘉義的嘉"], ["善", "善良的善"]], "猜": [["精", "精神的精"], ["晴", "晴天的晴"]], "春": [["奏", "演奏的奏"], ["泰", "泰國的泰"]], "多": [["夕", "夕陽的夕"], ["名", "名字的名"]], "清": [["情", "心情的情"], ["請", "請坐的請"]], "人": [["入", "進入的入"], ["八", "八個的八"]], "見": [["貝", "寶貝的貝"], ["兄", "兄弟的兄"]], "面": [["而", "而且的而"], ["百", "一百的百"]], "說": [["脫", "脫衣服的脫"], ["誰", "是誰的誰"]], "和": [["知", "知道的知"], ["私", "自私的私"]], "善": [["喜", "喜歡的喜"], ["羨", "羨慕的羨"]], "相": [["想", "想要的想"], ["箱", "箱子的箱"]], "處": [["慮", "考慮的慮"], ["虎", "老虎的虎"]], "都": [["部", "部首的部"], ["者", "作者的者"]], "有": [["右", "右邊的右"], ["月", "月亮的月"]], "出": [["山", "高山的山"], ["凸", "凹凸的凸"]], "頭": [["豆", "豆子的豆"], ["須", "必須的須"]], "黃": [["廣", "廣場的廣"], ["黑", "黑色的黑"]], "靠": [["告", "告訴的告"], ["非", "是非的非"]], "請": [["清", "清水的清"], ["情", "心情的情"]], "買": [["賣", "賣東西的賣"], ["貝", "寶貝的貝"]], "地": [["他", "他們的他"], ["池", "水池的池"]], "農": [["晨", "早晨的晨"], ["濃", "濃湯的濃"]], "愁": [["秋", "秋天的秋"], ["想", "想要的想"]], "應": [["鷹", "老鷹的鷹"], ["廳", "客廳的廳"]], "該": [["刻", "時刻的刻"], ["孩", "孩子的孩"]], "別": [["另", "另外的另"], ["剛", "剛才的剛"]]};
+const bph=y=>y.say||ph(y);
+/* 國字氣球：每關 5 個字，先出現一次（有小鳥暗示），再換順序出現一次（小鳥不見了） */
+let BIRD=false,BIRDTOLD=false,CNT=0,NLV=5,CUR=0;
+function bPlay(lv){clearTimeout(TM);TOK++;MODE='balloon';const LS=LEVELS();CUR=Math.max(0,Math.min(lv||0,LS.length-1));PL=LS[CUR];NLV=PL.length;BIRDTOLD=false;CNT=0;
+  const idx=PL.map((x,i)=>i),a=shuffle(idx);let b=shuffle(idx);if(b.length>1&&b[0]===a[a.length-1])b.push(b.shift());
+  ORDER=a.concat(b);I=0;STK=[];DONE=new Set();dots();bRound()}
+function bRound(){clearTimeout(TM);LOCK=false;const x=PL[ORDER[I]];const first=I<NLV;BIRD=SET.bird&&first;
+  let near=(SIM[x.c]||[]).map(([c,say])=>({c,say}));
+  if(near.length<SET.n-1){const pool=PL.filter(y=>y.c!==x.c&&y.w!==x.w);near=near.concat(shuffle(pool))}
+  const opts=shuffle([x].concat(shuffle(near).slice(0,SET.n-1)));const col=shuffle([0,1,2,3]);
+  main.innerHTML=`<div class="row"><button class="btn ${SET.bird?'y':'w'}" id="bOn" style="min-height:3rem;font-size:1.2rem">🐦 要有鳥暗示</button><button class="btn ${SET.bird?'w':'y'}" id="bOff" style="min-height:3rem;font-size:1.2rem">🚫 不要鳥暗示</button></div>
+  <div class="ask"><span class="pic">${x.p}</span><span class="word">${rbBlank(x.w,x.wz,x.c)}</span><button class="btn y" id="hr" style="min-height:3rem;font-size:1.2rem">🔊 再聽</button></div>
+  <div class="hint">第 ${CUR+1} 關　第 ${I+1} / ${ORDER.length} 題　${first?'':'（第二次，順序換了）'}</div>
+  <div class="bwrap" id="bw"><span class="bird" id="bird" ${BIRD?'':'hidden'}><span class="bi">🐦</span></span><div class="balloons">${opts.map((y,k)=>`<button class="balloon b${col[k]}" data-k="${k}"><span class="osp" data-k="${k}">🔊</span><span class="ch">${y.c}</span></button>`).join('')}</div></div>
+  <div class="stk">${STK.map(y=>`<span>${y.p.split(/(?=\p{Extended_Pictographic})/u)[0]}</span>`).join('')}</div>`;
+  const ask=()=>say(`請點出，${ph(x)}。`);
+  const bs=[...main.querySelectorAll('.balloon')],right=bs.find(b=>opts[+b.dataset.k].c===x.c);
+  let flown=false;
+  const fly=()=>{if(flown)return;flown=true;const w=$('#bw'),bird=$('#bird');if(!w||!bird)return;bird.hidden=false;const wr=w.getBoundingClientRect(),r=right.getBoundingClientRect(),br=bird.getBoundingClientRect();
+    bird.style.transform=`translate(${r.left-wr.left+r.width/2-br.width/2-(br.left-wr.left)}px,${r.top-wr.top-br.height*.8-(br.top-wr.top)}px)`;tone(1200,.08,0);tone(1500,.08,.12);
+    setTimeout(()=>{if(!right.isConnected||!flown)return;bird.style.display='none';const p=document.createElement('span');p.className='perch';p.textContent='🐦';right.appendChild(p);right.classList.add('glow');tone(1400,.1,0);tone(1700,.1,.12)},1550)};
+  const unfly=()=>{flown=false;const bird=$('#bird');if(bird){bird.hidden=true;bird.style.transform='';bird.style.display=''}main.querySelectorAll('.perch').forEach(e=>e.remove());right.classList.remove('glow')};
+  const pre=I===NLV?'這幾個字都出現過了，再來一次，順序不一樣喔！':'';
+  if(BIRD){say(pre+(!BIRDTOLD?`小鳥會飛到正確的字上面。請點出，${ph(x)}。`:`請點出，${ph(x)}。`));BIRDTOLD=true;setTimeout(()=>{if(main.contains(right))fly()},500)}
+  else say(pre+`請點出，${ph(x)}。`);
+  $('#hr').onclick=ask;
+  $('#bOn').onclick=()=>{SET.bird=true;saveSet();$('#bOn').className='btn y';$('#bOff').className='btn w';BIRD=true;say('要有鳥暗示，小鳥來幫忙了。');fly()};
+  $('#bOff').onclick=()=>{SET.bird=false;saveSet();$('#bOn').className='btn w';$('#bOff').className='btn y';BIRD=false;unfly();say('不要鳥暗示，自己找找看。')};
+  main.querySelectorAll('.balloon .osp').forEach(s=>s.onclick=e=>{e.stopPropagation();say(bph(opts[+s.dataset.k]))});
+  bs.forEach(c=>c.onclick=()=>{if(LOCK)return;const y=opts[+c.dataset.k];
+    if(y.c===x.c){LOCK=true;bs.forEach(o=>{if(o!==c)o.classList.add('dim')});c.classList.add('popped');ding();
+      const w=$('#bw'),wr=w.getBoundingClientRect(),r=c.getBoundingClientRect();const e=document.createElement('span');e.className='boom';e.textContent='💥';e.style.left=(r.left-wr.left+r.width/2)+'px';e.style.top=(r.top-wr.top+r.height/2)+'px';w.appendChild(e);
+      if(!STK.includes(x))STK.push(x);DONE.add(x.c);CNT++;dots();
+      const p=['答對了！','好棒！','你好厲害！','太棒了！','氣球飛走囉！'][Math.floor(Math.random()*5)];praise(p);say(`${p}${ph(x)}。`);
+      TM=setTimeout(()=>{I++;I>=ORDER.length?bFinish():bRound()},2600)}
+    else{LOCK=true;setTimeout(()=>{LOCK=false},800);tone(220,.2,0);
+      if(BIRD){c.animate([{transform:'translateX(-.5rem)'},{transform:'translateX(.5rem)'},{transform:'none'}],{duration:400});say('跟著小鳥，點小鳥站的氣球喔。');fly()}
+      else{c.classList.add('bad');say(`這是，${bph(y)}。再找找看。`);const left=bs.filter(o=>!o.classList.contains('bad'));if(left.length>1)right.classList.add('glow')}}})}
+function bFinish(){confetti(40);ding();const LS=LEVELS(),last=CUR>=LS.length-1;LV=last?0:CUR+1;saveLv();
+  main.innerHTML=`<div class="pic" style="font-size:4rem">🎈🌈🎈</div><div class="title">第 ${CUR+1} 關完成！</div>
+  <div class="row"><button class="btn y" id="again" style="font-size:1.6rem;min-height:4.4rem">🔁 再玩一次</button><button class="btn" id="next" style="font-size:1.6rem;min-height:4.4rem">${last?'🎉 從第 1 關再玩':'➡ 進入下一關'}</button></div>
+  <div class="hint" style="font-size:1.2rem">這一關的 ${STK.length} 個字，點一點可以再聽一次。</div>
+  <div class="grid" style="grid-template-columns:repeat(5,minmax(0,1fr));gap:.4rem">${STK.map((x,i)=>`<button data-i="${i}" style="font-size:1.2rem;padding:.2rem">${x.p}<small style="font-size:1.6rem">${rb(x.c,x.z)}</small></button>`).join('')}</div>`;
+  say(last?`太棒了！全部 ${LS.length} 關都完成了！要再玩一次，還是從第一關再玩？`:`好棒！第 ${CUR+1} 關完成了！要再玩一次，還是進入下一關？`);
+  main.querySelectorAll('.grid button').forEach(b=>b.onclick=()=>showTip(STK[+b.dataset.i]));
+  $('#again').onclick=()=>bPlay(CUR);$('#next').onclick=()=>bPlay(last?0:CUR+1)}
+/* 上方按鈕 */
+$('#home').onclick=()=>{HOME_SAID=true;startScreen()};
+$('#zy').onclick=()=>{SET.zy=!SET.zy;saveSet();applySet();say(SET.zy?'打開注音':'關掉注音')};
+$('#nopt').onclick=()=>{SET.n=SET.n===2?3:2;saveSet();applySet();say(SET.n===2?'兩個選項':'三個選項');if($('#bw')){I=Math.min(I,ORDER.length-1);bRound()}else if($('#sky'))round();else if($('#pond'))picRound();else if($('#lake'))zyRound()};
+$('#slow').onclick=()=>{SET.slow=!SET.slow;saveSet();applySet();say(SET.slow?'我會慢慢唸':'一般速度')};
+applySet();startScreen();
+</script>
+</body></html>
